@@ -1,21 +1,35 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { StatusBar } from "./StatusBar";
 import { SideMenu } from "./SideMenu";
 import { HomeScreen } from "./HomeScreen";
 import { VoiceOverlay } from "./VoiceOverlay";
+import { SagiKeyboard } from "./SagiKeyboard";
+import { Setup } from "@/pages/Setup";
 import { Browser } from "../apps/Browser";
 import { Calculator } from "../apps/Calculator";
 import { Notes } from "../apps/Notes";
 import { FileManager } from "../apps/FileManager";
 import { Settings } from "../apps/Settings";
+import { Mic } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type Screen = "home" | "browser" | "calculator" | "notes" | "files" | "settings";
 
 export function Desktop() {
+  const [isSetupComplete, setIsSetupComplete] = useState(localStorage.getItem("setupComplete") === "true");
   const [currentScreen, setCurrentScreen] = useState<Screen>("home");
   const [screenHistory, setScreenHistory] = useState<Screen[]>(["home"]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [voiceOpen, setVoiceOpen] = useState(false);
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const [transcript, setTranscript] = useState("");
+  const [isListening, setIsListening] = useState(false);
+
+  useEffect(() => {
+    if (!isSetupComplete) {
+      setIsSetupComplete(false);
+    }
+  }, []);
 
   const navigateTo = useCallback((screen: string) => {
     const validScreen = screen as Screen;
@@ -54,6 +68,16 @@ export function Desktop() {
     }
   }, [navigateTo]);
 
+  const handleSagiMessage = (message: string) => {
+    handleVoiceCommand(message);
+    setTranscript("");
+  };
+
+  const handleSetupComplete = () => {
+    setIsSetupComplete(true);
+    localStorage.setItem("setupComplete", "true");
+  };
+
   const renderScreen = () => {
     switch (currentScreen) {
       case "home":
@@ -78,6 +102,10 @@ export function Desktop() {
     }
   };
 
+  if (!isSetupComplete) {
+    return <Setup onComplete={handleSetupComplete} />;
+  }
+
   return (
     <div 
       className="h-screen w-screen overflow-hidden bg-gradient-to-br from-[#0a1628] via-[#1a2942] to-[#0a1628] relative"
@@ -94,6 +122,20 @@ export function Desktop() {
         {renderScreen()}
       </div>
 
+      {/* Persistent Sagi Button */}
+      {!voiceOpen && currentScreen !== "home" && (
+        <div className="fixed bottom-24 left-1/2 transform -translate-x-1/2 z-[200]">
+          <Button
+            size="icon"
+            className="w-16 h-16 rounded-full bg-primary/90 hover:bg-primary shadow-lg shadow-primary/50"
+            onClick={() => setVoiceOpen(true)}
+            data-testid="button-sagi-persistent"
+          >
+            <Mic className="w-7 h-7" />
+          </Button>
+        </div>
+      )}
+
       <SideMenu
         isOpen={menuOpen}
         onClose={() => setMenuOpen(false)}
@@ -107,6 +149,14 @@ export function Desktop() {
         isOpen={voiceOpen}
         onClose={() => setVoiceOpen(false)}
         onCommand={handleVoiceCommand}
+      />
+
+      <SagiKeyboard
+        isOpen={keyboardOpen}
+        onSend={handleSagiMessage}
+        onClose={() => setKeyboardOpen(false)}
+        isListening={isListening}
+        transcript={transcript}
       />
     </div>
   );

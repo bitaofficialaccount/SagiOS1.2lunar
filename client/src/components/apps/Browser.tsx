@@ -179,27 +179,6 @@ export function Browser({ onBack }: BrowserProps) {
           <Home className="w-5 h-5" />
         </Button>
 
-        <form onSubmit={handleSubmit} className="flex-1 flex items-center">
-          <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-            <Input
-              value={inputUrl}
-              onChange={(e) => setInputUrl(e.target.value)}
-              placeholder="Search or enter URL"
-              className="pl-12 pr-12 h-12 rounded-full bg-secondary/50 text-base"
-              data-testid="input-browser-url"
-            />
-            <Button
-              type="button"
-              size="icon"
-              variant="ghost"
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full"
-            >
-              <Star className="w-4 h-4" />
-            </Button>
-          </div>
-        </form>
-
         <Button
           size="icon"
           variant="ghost"
@@ -245,45 +224,50 @@ export function Browser({ onBack }: BrowserProps) {
             ref={iframeRef}
             src={activeTab.url}
             className="w-full h-full border-0"
-            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-            title="Browser"
-            data-testid="browser-iframe"
+            title={activeTab.title}
+            data-testid="iframe-browser"
           />
         ) : (
-          <div className="flex flex-col items-center justify-center h-full p-8">
-            <h1 className="text-4xl font-light mb-8 text-primary">SagiOS Browser</h1>
-            
-            <form onSubmit={handleSubmit} className="w-full max-w-xl mb-12">
-              <div className="relative">
-                <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-6 h-6 text-muted-foreground" />
-                <Input
-                  value={inputUrl}
-                  onChange={(e) => setInputUrl(e.target.value)}
-                  placeholder="Search the web or enter URL"
-                  className="pl-14 h-16 rounded-full text-lg bg-card/60 backdrop-blur-md border-border/50"
-                  data-testid="input-browser-search-home"
-                />
-              </div>
-            </form>
-
-            <div className="grid grid-cols-4 gap-6">
-              {defaultBookmarks.map((bookmark, index) => (
+          <div className="h-full flex flex-col items-center justify-center p-8">
+            <h2 className="text-2xl font-semibold mb-6">New Tab</h2>
+            <div className="grid grid-cols-4 gap-4 mb-8">
+              {defaultBookmarks.map((bookmark) => (
                 <button
-                  key={index}
-                  className="flex flex-col items-center gap-3 p-6 rounded-2xl hover-elevate active-elevate-2 transition-all"
+                  key={bookmark.name}
+                  className="flex flex-col items-center gap-3 p-4 rounded-xl hover-elevate active-elevate-2"
                   onClick={() => navigateTo(bookmark.url)}
-                  data-testid={`bookmark-${index}`}
+                  data-testid={`bookmark-${bookmark.name.toLowerCase()}`}
                 >
-                  <div className="w-16 h-16 rounded-2xl bg-card/60 backdrop-blur-md flex items-center justify-center text-3xl border border-border/30">
-                    {bookmark.icon}
-                  </div>
-                  <span className="text-sm">{bookmark.name}</span>
+                  <div className="text-4xl">{bookmark.icon}</div>
+                  <p className="text-sm font-medium">{bookmark.name}</p>
                 </button>
               ))}
             </div>
           </div>
         )}
       </div>
+
+      {/* Address Bar at Bottom */}
+      <form onSubmit={handleSubmit} className="p-4 bg-card/80 backdrop-blur-md border-t border-border/50">
+        <div className="relative flex items-center max-w-2xl mx-auto">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+          <Input
+            value={inputUrl}
+            onChange={(e) => setInputUrl(e.target.value)}
+            placeholder="Search or enter URL"
+            className="pl-12 pr-12 h-12 rounded-full bg-secondary/50 text-base"
+            data-testid="input-browser-url"
+          />
+          <Button
+            type="button"
+            size="icon"
+            variant="ghost"
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full"
+          >
+            <Star className="w-4 h-4" />
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

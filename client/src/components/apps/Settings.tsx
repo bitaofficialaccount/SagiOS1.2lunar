@@ -28,10 +28,8 @@ interface SettingsProps {
 }
 
 const sections: SettingsSection[] = [
-  { id: "display", name: "Display", icon: <Monitor className="w-6 h-6" /> },
-  { id: "sound", name: "Sound", icon: <Volume2 className="w-6 h-6" /> },
   { id: "voice", name: "Voice Assistant", icon: <Mic className="w-6 h-6" /> },
-  { id: "network", name: "Network", icon: <Wifi className="w-6 h-6" /> },
+  { id: "sound", name: "Sound", icon: <Volume2 className="w-6 h-6" /> },
   { id: "notifications", name: "Notifications", icon: <Bell className="w-6 h-6" /> },
   { id: "privacy", name: "Privacy", icon: <Lock className="w-6 h-6" /> },
   { id: "personalization", name: "Personalization", icon: <Palette className="w-6 h-6" /> },
@@ -45,6 +43,8 @@ export function Settings({ onBack }: SettingsProps) {
   const [wakeWordEnabled, setWakeWordEnabled] = useState(true);
   const [volume, setVolume] = useState([75]);
   const [speechRate, setSpeechRate] = useState([50]);
+  const [microphoneStatus, setMicrophoneStatus] = useState("ready");
+  const [isTesting, setIsTesting] = useState(false);
 
   return (
     <div className="flex flex-col h-full">
@@ -158,6 +158,34 @@ export function Settings({ onBack }: SettingsProps) {
                   data-testid="slider-speech-rate"
                 />
               </div>
+            </div>
+
+            <div className="pt-4 border-t border-border">
+              <h3 className="text-sm font-medium mb-4">Test Microphone</h3>
+              <p className="text-xs text-muted-foreground mb-3">Try saying "Hey, Sagi" to test voice activation</p>
+              <Button
+                onClick={async () => {
+                  setIsTesting(true);
+                  try {
+                    await navigator.mediaDevices.getUserMedia({ audio: true });
+                    setMicrophoneStatus("working");
+                  } catch (err) {
+                    setMicrophoneStatus("error");
+                  }
+                  setIsTesting(false);
+                }}
+                disabled={isTesting}
+                className="w-full"
+                data-testid="button-test-microphone"
+              >
+                {isTesting ? "Testing..." : "Test Microphone"}
+              </Button>
+              {microphoneStatus === "working" && (
+                <p className="text-xs text-green-400 mt-2">✓ Microphone is working</p>
+              )}
+              {microphoneStatus === "error" && (
+                <p className="text-xs text-red-400 mt-2">✗ Microphone access denied</p>
+              )}
             </div>
 
             <div className="pt-4 border-t border-border">
