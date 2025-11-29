@@ -1,7 +1,12 @@
 import { useState } from "react";
+import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export function Calculator() {
+interface CalculatorProps {
+  onBack?: () => void;
+}
+
+export function Calculator({ onBack }: CalculatorProps) {
   const [display, setDisplay] = useState("0");
   const [previousValue, setPreviousValue] = useState<number | null>(null);
   const [operator, setOperator] = useState<string | null>(null);
@@ -101,18 +106,33 @@ export function Calculator() {
     setDisplay(String(parseFloat(display) / 100));
   };
 
-  const buttonClass = "h-12 text-lg font-medium";
+  const buttonClass = "h-16 text-xl font-medium rounded-xl";
 
   return (
-    <div className="flex flex-col h-full p-4 gap-3">
+    <div className="flex flex-col h-full">
+      <div className="flex items-center gap-3 p-4 bg-card/80 backdrop-blur-md border-b border-border/50">
+        {onBack && (
+          <Button
+            size="icon"
+            variant="ghost"
+            className="w-12 h-12 rounded-full shrink-0"
+            onClick={onBack}
+            data-testid="button-calc-back"
+          >
+            <ArrowLeft className="w-6 h-6" />
+          </Button>
+        )}
+        <h1 className="text-xl font-semibold">Calculator</h1>
+      </div>
+      <div className="flex-1 flex flex-col p-4 gap-4">
       <div 
-        className="bg-secondary/50 rounded-lg p-4 text-right"
+        className="bg-secondary/50 rounded-2xl p-6 text-right"
         data-testid="calculator-display"
       >
-        <div className="text-muted-foreground text-sm h-5">
+        <div className="text-muted-foreground text-base h-6">
           {previousValue !== null && `${previousValue} ${operator}`}
         </div>
-        <div className="text-3xl font-light truncate" data-testid="text-calc-result">
+        <div className="text-5xl font-light truncate" data-testid="text-calc-result">
           {display}
         </div>
       </div>
@@ -141,6 +161,7 @@ export function Calculator() {
         <Button variant="ghost" className={`${buttonClass} col-span-2`} onClick={() => inputDigit("0")} data-testid="button-calc-0">0</Button>
         <Button variant="ghost" className={buttonClass} onClick={inputDecimal} data-testid="button-calc-decimal">.</Button>
         <Button variant="default" className={buttonClass} onClick={calculate} data-testid="button-calc-equals">=</Button>
+      </div>
       </div>
     </div>
   );

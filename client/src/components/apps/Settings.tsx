@@ -8,12 +8,14 @@ import {
   Lock, 
   Palette,
   User,
-  Info
+  Info,
+  ArrowLeft
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
 
 interface SettingsSection {
   id: string;
@@ -21,19 +23,23 @@ interface SettingsSection {
   icon: React.ReactNode;
 }
 
+interface SettingsProps {
+  onBack?: () => void;
+}
+
 const sections: SettingsSection[] = [
-  { id: "display", name: "Display", icon: <Monitor className="w-5 h-5" /> },
-  { id: "sound", name: "Sound", icon: <Volume2 className="w-5 h-5" /> },
-  { id: "voice", name: "Voice Assistant", icon: <Mic className="w-5 h-5" /> },
-  { id: "network", name: "Network", icon: <Wifi className="w-5 h-5" /> },
-  { id: "notifications", name: "Notifications", icon: <Bell className="w-5 h-5" /> },
-  { id: "privacy", name: "Privacy", icon: <Lock className="w-5 h-5" /> },
-  { id: "personalization", name: "Personalization", icon: <Palette className="w-5 h-5" /> },
-  { id: "account", name: "Account", icon: <User className="w-5 h-5" /> },
-  { id: "about", name: "About", icon: <Info className="w-5 h-5" /> },
+  { id: "display", name: "Display", icon: <Monitor className="w-6 h-6" /> },
+  { id: "sound", name: "Sound", icon: <Volume2 className="w-6 h-6" /> },
+  { id: "voice", name: "Voice Assistant", icon: <Mic className="w-6 h-6" /> },
+  { id: "network", name: "Network", icon: <Wifi className="w-6 h-6" /> },
+  { id: "notifications", name: "Notifications", icon: <Bell className="w-6 h-6" /> },
+  { id: "privacy", name: "Privacy", icon: <Lock className="w-6 h-6" /> },
+  { id: "personalization", name: "Personalization", icon: <Palette className="w-6 h-6" /> },
+  { id: "account", name: "Account", icon: <User className="w-6 h-6" /> },
+  { id: "about", name: "About", icon: <Info className="w-6 h-6" /> },
 ];
 
-export function Settings() {
+export function Settings({ onBack }: SettingsProps) {
   const [activeSection, setActiveSection] = useState("voice");
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [wakeWordEnabled, setWakeWordEnabled] = useState(true);
@@ -41,17 +47,32 @@ export function Settings() {
   const [speechRate, setSpeechRate] = useState([50]);
 
   return (
-    <div className="flex h-full">
-      <div className="w-48 border-r border-border">
+    <div className="flex flex-col h-full">
+      <div className="flex items-center gap-3 p-4 bg-card/80 backdrop-blur-md border-b border-border/50">
+        {onBack && (
+          <Button
+            size="icon"
+            variant="ghost"
+            className="w-12 h-12 rounded-full shrink-0"
+            onClick={onBack}
+            data-testid="button-settings-back"
+          >
+            <ArrowLeft className="w-6 h-6" />
+          </Button>
+        )}
+        <h1 className="text-xl font-semibold">Settings</h1>
+      </div>
+    <div className="flex flex-1 overflow-hidden">
+      <div className="w-64 border-r border-border">
         <ScrollArea className="h-full">
-          <div className="p-2 space-y-0.5">
+          <div className="p-3 space-y-2">
             {sections.map((section) => (
               <button
                 key={section.id}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
+                className={`w-full flex items-center gap-4 p-4 rounded-xl text-base transition-colors ${
                   activeSection === section.id 
                     ? "bg-primary/20 text-foreground" 
-                    : "hover-elevate"
+                    : "hover-elevate active-elevate-2"
                 }`}
                 onClick={() => setActiveSection(section.id)}
                 data-testid={`settings-section-${section.id}`}
@@ -210,10 +231,11 @@ export function Settings() {
 
         {!["voice", "about", "display"].includes(activeSection) && (
           <div className="flex items-center justify-center h-full text-muted-foreground">
-            <p>Settings for {sections.find(s => s.id === activeSection)?.name} coming soon</p>
+            <p className="text-lg">Settings for {sections.find(s => s.id === activeSection)?.name} coming soon</p>
           </div>
         )}
       </div>
+    </div>
     </div>
   );
 }

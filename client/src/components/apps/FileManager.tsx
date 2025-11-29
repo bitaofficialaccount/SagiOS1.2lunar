@@ -11,9 +11,11 @@ import {
   Home,
   HardDrive,
   Download,
-  Star
+  Star,
+  ArrowLeft
 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
 
 interface FileItem {
   id: string;
@@ -153,7 +155,11 @@ function FolderTree({
   );
 }
 
-export function FileManager() {
+interface FileManagerProps {
+  onBack?: () => void;
+}
+
+export function FileManager({ onBack }: FileManagerProps) {
   const [selectedItem, setSelectedItem] = useState<FileItem | null>(null);
 
   const sidebarItems = [
@@ -164,37 +170,52 @@ export function FileManager() {
   ];
 
   return (
-    <div className="flex h-full">
-      <div className="w-40 border-r border-border p-2">
-        <div className="space-y-0.5">
+    <div className="flex flex-col h-full">
+      <div className="flex items-center gap-3 p-4 bg-card/80 backdrop-blur-md border-b border-border/50">
+        {onBack && (
+          <Button
+            size="icon"
+            variant="ghost"
+            className="w-12 h-12 rounded-full shrink-0"
+            onClick={onBack}
+            data-testid="button-files-back"
+          >
+            <ArrowLeft className="w-6 h-6" />
+          </Button>
+        )}
+        <h1 className="text-xl font-semibold">Files</h1>
+      </div>
+    <div className="flex flex-1 overflow-hidden">
+      <div className="w-52 border-r border-border p-3">
+        <div className="space-y-2">
           {sidebarItems.map((item) => (
             <button
               key={item.id}
-              className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-sm hover-elevate"
+              className="w-full flex items-center gap-3 p-3 rounded-xl text-base hover-elevate active-elevate-2"
               data-testid={`sidebar-${item.id}`}
             >
-              <item.icon className="w-4 h-4 text-primary" />
+              <item.icon className="w-5 h-5 text-primary" />
               <span>{item.label}</span>
             </button>
           ))}
         </div>
-        <div className="h-px bg-border my-2" />
-        <p className="px-2 text-xs text-muted-foreground mb-1">Quick Access</p>
+        <div className="h-px bg-border my-3" />
+        <p className="px-3 text-sm text-muted-foreground mb-2">Quick Access</p>
       </div>
 
       <div className="flex-1 flex flex-col">
-        <div className="flex items-center gap-2 px-3 py-2 border-b border-border text-sm text-muted-foreground">
-          <Home className="w-4 h-4" />
-          <ChevronRight className="w-3 h-3" />
+        <div className="flex items-center gap-2 px-4 py-3 border-b border-border text-base text-muted-foreground">
+          <Home className="w-5 h-5" />
+          <ChevronRight className="w-4 h-4" />
           <span>Files</span>
           {selectedItem && (
             <>
-              <ChevronRight className="w-3 h-3" />
+              <ChevronRight className="w-4 h-4" />
               <span className="text-foreground">{selectedItem.name}</span>
             </>
           )}
         </div>
-        <ScrollArea className="flex-1 p-2">
+        <ScrollArea className="flex-1 p-3">
           <FolderTree 
             items={mockFileSystem} 
             selectedId={selectedItem?.id || null}
@@ -212,7 +233,7 @@ export function FileManager() {
             <p className="text-sm font-medium break-all">{selectedItem.name}</p>
             <p className="text-xs text-muted-foreground capitalize">{selectedItem.type}</p>
           </div>
-          <div className="space-y-2 text-xs">
+          <div className="space-y-3 text-sm">
             <div className="flex justify-between">
               <span className="text-muted-foreground">Type</span>
               <span>{selectedItem.type === "folder" ? "Folder" : selectedItem.icon || "File"}</span>
@@ -224,6 +245,7 @@ export function FileManager() {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 }
