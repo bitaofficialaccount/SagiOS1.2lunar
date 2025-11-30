@@ -11,7 +11,7 @@ export function ExploreSagi({ onBack }: ExploreSagiProps) {
       icon: Mic,
       title: "Voice Commands",
       description: "Say 'Hey, Sagi' to activate voice control. Ask for anything - open apps, get information, or control features.",
-      color: "bg-purple-500/20 text-purple-400"
+      color: "bg-blue-500/20 text-blue-400"
     },
     {
       icon: Keyboard,

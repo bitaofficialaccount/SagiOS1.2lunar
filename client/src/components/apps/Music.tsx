@@ -59,7 +59,7 @@ export function Music({ onBack }: MusicAppProps) {
   return (
     <div className="h-full w-full bg-gradient-to-br from-[#0a1628] via-[#1a2942] to-[#0a1628] flex flex-col pt-20">
       <div className="flex items-center gap-4 px-6 mb-6">
-        <MusicIcon className="w-8 h-8 text-purple-400" />
+        <MusicIcon className="w-8 h-8 text-blue-400" />
         <h1 className="text-3xl font-bold">Music</h1>
         <Button 
           size="icon" 

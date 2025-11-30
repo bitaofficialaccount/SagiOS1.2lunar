@@ -76,7 +76,7 @@ const getFileIcon = (item: FileItem) => {
     case "image":
       return <Image className="w-5 h-5 text-green-400" />;
     case "music":
-      return <Music className="w-5 h-5 text-purple-400" />;
+      return <Music className="w-5 h-5 text-blue-400" />;
     case "video":
       return <Video className="w-5 h-5 text-red-400" />;
     case "document":

@@ -12,7 +12,7 @@ interface AppDrawerProps {
 const apps = [
   { id: "browser", name: "Browser", icon: Globe, color: "bg-violet-500/20 text-violet-400" },
   { id: "photos", name: "Photos", icon: Image, color: "bg-pink-500/20 text-pink-400" },
-  { id: "weather", name: "Weather", icon: Cloud, color: "bg-purple-500/20 text-purple-400" },
+  { id: "weather", name: "Weather", icon: Cloud, color: "bg-blue-500/20 text-blue-400" },
   { id: "videos", name: "Videos", icon: Video, color: "bg-red-500/20 text-red-400" },
   { id: "music", name: "Music", icon: Music, color: "bg-indigo-500/20 text-indigo-400" },
   { id: "notes", name: "Notes", icon: FileText, color: "bg-amber-500/20 text-amber-400" },
@@ -29,7 +29,7 @@ const storeApps = [
   { id: "explore", name: "Explore SAGI", icon: Compass, color: "bg-gradient-to-br from-primary/40 to-accent/40 text-accent" },
   { id: "browser", name: "Browser", icon: Globe, color: "bg-violet-500/20 text-violet-400" },
   { id: "photos", name: "Photos", icon: Image, color: "bg-pink-500/20 text-pink-400" },
-  { id: "weather", name: "Weather", icon: Cloud, color: "bg-purple-500/20 text-purple-400" },
+  { id: "weather", name: "Weather", icon: Cloud, color: "bg-blue-500/20 text-blue-400" },
   { id: "videos", name: "Videos", icon: Video, color: "bg-red-500/20 text-red-400" },
   { id: "music", name: "Music", icon: Music, color: "bg-indigo-500/20 text-indigo-400" },
   { id: "notes", name: "Notes", icon: FileText, color: "bg-amber-500/20 text-amber-400" },

@@ -67,7 +67,7 @@ export function SagiRetail({ onBack, onOpenSettings }: SagiRetailProps) {
 
               <div className="bg-card/40 rounded-xl p-4 border border-border/50 hover-elevate">
                 <div className="flex items-center gap-2 mb-2">
-                  <Volume2 className="w-5 h-5 text-purple-400" />
+                  <Volume2 className="w-5 h-5 text-blue-400" />
                   <p className="font-semibold">Audio & Voice</p>
                 </div>
                 <p className="text-sm text-muted-foreground">Adjust volume, speech rate, and voice assistant settings</p>

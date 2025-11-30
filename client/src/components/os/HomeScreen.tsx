@@ -98,7 +98,7 @@ export function HomeScreen({ onOpenApp, onOpenVoice, isStoreMode }: HomeScreenPr
                   </div>
                 </div>
                 <div className="flex gap-3 p-3 bg-white/5 rounded-lg">
-                  <Mic className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
+                  <Mic className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
                   <div>
                     <p className="font-medium text-sm">Multi-App Support</p>
                     <p className="text-xs text-muted-foreground">12+ integrated applications</p>
@@ -109,7 +109,7 @@ export function HomeScreen({ onOpenApp, onOpenVoice, isStoreMode }: HomeScreenPr
 
             <WidgetCard 
               title="Voice Commands" 
-              className="bg-gradient-to-br from-purple-500/20 to-pink-500/20"
+              className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20"
             >
               <div className="space-y-3">
                 <div className="mb-3">
@@ -204,9 +204,9 @@ export function HomeScreen({ onOpenApp, onOpenVoice, isStoreMode }: HomeScreenPr
                 <p className="text-xs text-muted-foreground mt-1">Browse the web freely</p>
               </div>
             </WidgetCard>
-            <WidgetCard className="bg-gradient-to-br from-purple-500/20 to-fuchsia-500/20">
+            <WidgetCard className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20">
               <div className="flex flex-col items-center text-center">
-                <Image className="w-8 h-8 text-purple-400 mb-2" />
+                <Image className="w-8 h-8 text-blue-400 mb-2" />
                 <p className="font-medium text-sm">Photos</p>
                 <p className="text-xs text-muted-foreground mt-1">View your galleries</p>
               </div>
@@ -393,7 +393,7 @@ export function HomeScreen({ onOpenApp, onOpenVoice, isStoreMode }: HomeScreenPr
           { id: "calculator", name: "Calculator", icon: Calculator, color: "text-teal-400" },
           { id: "files", name: "Files", icon: FolderOpen, color: "text-sky-400" },
           { id: "videos", name: "Videos", icon: Video, color: "text-red-400" },
-          { id: "music", name: "Music", icon: Music, color: "text-purple-400" },
+          { id: "music", name: "Music", icon: Music, color: "text-blue-400" },
           { id: "news", name: "News", icon: Newspaper, color: "text-orange-400" },
         ];
         return (
