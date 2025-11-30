@@ -9,7 +9,10 @@ interface SetupProps {
 
 export function Setup({ onComplete }: SetupProps) {
   const [step, setStep] = useState<"welcome" | "sagi-id" | "country" | "language" | "app-providers" | "microphone" | "complete">("welcome");
+  const [sagiIdMode, setSagiIdMode] = useState<"create" | "login">("create");
   const [sagiId, setSagiId] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("US");
   const [selectedLanguage, setSelectedLanguage] = useState("en");
   const [selectedProviders, setSelectedProviders] = useState<{ [key: string]: string | null }>({
@@ -122,25 +125,86 @@ export function Setup({ onComplete }: SetupProps) {
         {step === "sagi-id" && (
           <div className="space-y-8 animate-fade-in">
             <div>
-              <h2 className="text-3xl font-bold mb-2">Create Your SAGI ID</h2>
-              <p className="text-muted-foreground">Your unique identifier for this device</p>
+              <h2 className="text-3xl font-bold mb-2">{sagiIdMode === "create" ? "Create Your SAGI ID" : "Sign In"}</h2>
+              <p className="text-muted-foreground">{sagiIdMode === "create" ? "Your unique identifier for this device" : "Access your existing account"}</p>
+            </div>
+
+            <div className="flex gap-2 bg-card/40 backdrop-blur-md border border-border/50 rounded-xl p-1">
+              <Button
+                variant={sagiIdMode === "create" ? "default" : "ghost"}
+                className="flex-1 rounded-lg h-10"
+                onClick={() => {
+                  setSagiIdMode("create");
+                  setSagiId("");
+                  setUsername("");
+                  setPassword("");
+                }}
+                data-testid="button-mode-create"
+              >
+                Create
+              </Button>
+              <Button
+                variant={sagiIdMode === "login" ? "default" : "ghost"}
+                className="flex-1 rounded-lg h-10"
+                onClick={() => {
+                  setSagiIdMode("login");
+                  setSagiId("");
+                  setUsername("");
+                  setPassword("");
+                }}
+                data-testid="button-mode-login"
+              >
+                Login
+              </Button>
             </div>
 
             <div className="space-y-3">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">SAGI ID</label>
-                <div className="flex items-center gap-2 p-3 rounded-xl bg-card/40 backdrop-blur-md border border-border/50">
-                  <User className="w-5 h-5 text-muted-foreground" />
-                  <Input
-                    value={sagiId}
-                    onChange={(e) => setSagiId(e.target.value)}
-                    placeholder="Enter your SAGI ID"
-                    className="border-0 bg-transparent text-base"
-                    data-testid="input-sagi-id"
-                  />
+              {sagiIdMode === "create" ? (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">SAGI ID</label>
+                  <div className="flex items-center gap-2 p-3 rounded-xl bg-card/40 backdrop-blur-md border border-border/50">
+                    <User className="w-5 h-5 text-muted-foreground" />
+                    <Input
+                      value={sagiId}
+                      onChange={(e) => setSagiId(e.target.value)}
+                      placeholder="Enter your SAGI ID"
+                      className="border-0 bg-transparent text-base"
+                      data-testid="input-sagi-id"
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground">Use letters, numbers, and underscores (3-20 characters)</p>
                 </div>
-                <p className="text-xs text-muted-foreground">Use letters, numbers, and underscores (3-20 characters)</p>
-              </div>
+              ) : (
+                <>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Username</label>
+                    <div className="flex items-center gap-2 p-3 rounded-xl bg-card/40 backdrop-blur-md border border-border/50">
+                      <User className="w-5 h-5 text-muted-foreground" />
+                      <Input
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="Enter your username"
+                        className="border-0 bg-transparent text-base"
+                        data-testid="input-username"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Password</label>
+                    <div className="flex items-center gap-2 p-3 rounded-xl bg-card/40 backdrop-blur-md border border-border/50">
+                      <User className="w-5 h-5 text-muted-foreground" />
+                      <Input
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Enter your password"
+                        type="password"
+                        className="border-0 bg-transparent text-base"
+                        data-testid="input-password"
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
 
             <div className="flex gap-3">
@@ -157,7 +221,7 @@ export function Setup({ onComplete }: SetupProps) {
                 size="lg"
                 className="flex-1 h-12 rounded-full"
                 onClick={() => setStep("country")}
-                disabled={sagiId.length < 3}
+                disabled={sagiIdMode === "create" ? sagiId.length < 3 : username.length < 3 || password.length < 3}
                 data-testid="button-next-sagi-id"
               >
                 Next
