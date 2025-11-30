@@ -222,10 +222,11 @@ export function Browser({ onBack }: BrowserProps) {
         {activeTab.url ? (
           <iframe
             ref={iframeRef}
-            src={activeTab.url}
+            src={`/api/proxy?url=${encodeURIComponent(activeTab.url)}`}
             className="w-full h-full border-0"
             title={activeTab.title}
             data-testid="iframe-browser"
+            sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock"
           />
         ) : (
           <div className="h-full flex flex-col items-center justify-center p-8">
