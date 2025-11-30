@@ -1,82 +1,123 @@
-import { useState, useRef } from "react";
-import { Newspaper, ArrowLeft, RotateCcw } from "lucide-react";
+import { useState } from "react";
+import { Newspaper, ArrowLeft, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
-interface NewsSource {
+interface NewsArticle {
   id: string;
-  name: string;
+  title: string;
+  description: string;
+  category: "tech" | "world" | "business" | "science";
+  date: string;
+  source: string;
   url: string;
 }
 
-const NEWS_SOURCES: NewsSource[] = [
-  { id: "bbc", name: "BBC News", url: "https://www.bbc.com/news" },
-  { id: "cnn", name: "CNN", url: "https://www.cnn.com" },
-  { id: "reuters", name: "Reuters", url: "https://www.reuters.com" },
-  { id: "apnews", name: "AP News", url: "https://apnews.com" },
-  { id: "techcrunch", name: "TechCrunch", url: "https://techcrunch.com" },
+const MOCK_ARTICLES: NewsArticle[] = [
+  {
+    id: "1",
+    title: "AI Breakthroughs Continue to Transform Industries",
+    description: "Recent advancements in artificial intelligence are reshaping how businesses operate across sectors. Companies are investing heavily in AI infrastructure and talent.",
+    category: "tech",
+    date: "2 hours ago",
+    source: "TechNews Daily",
+    url: "#"
+  },
+  {
+    id: "2",
+    title: "Global Markets React to Economic News",
+    description: "Major stock indices moved following latest employment data. Analysts remain cautious about near-term outlook despite some positive indicators.",
+    category: "business",
+    date: "4 hours ago",
+    source: "Finance Weekly",
+    url: "#"
+  },
+  {
+    id: "3",
+    title: "Scientists Discover New Exoplanet in Habitable Zone",
+    description: "Using advanced telescopes, researchers have identified a potentially habitable planet orbiting a nearby star. The discovery opens new possibilities for studying distant worlds.",
+    category: "science",
+    date: "6 hours ago",
+    source: "Science Today",
+    url: "#"
+  },
+  {
+    id: "4",
+    title: "Tech Company Announces Major Sustainability Initiative",
+    description: "A leading technology firm commits to achieving net-zero emissions by 2030. The company plans significant investments in renewable energy and carbon reduction.",
+    category: "tech",
+    date: "8 hours ago",
+    source: "Green Tech",
+    url: "#"
+  },
+  {
+    id: "5",
+    title: "International Trade Negotiations Progress",
+    description: "Countries reach preliminary agreement on key trade issues. Experts believe this could lead to reduced tariffs and increased commerce in coming months.",
+    category: "world",
+    date: "10 hours ago",
+    source: "World Affairs",
+    url: "#"
+  },
+  {
+    id: "6",
+    title: "Quantum Computing Milestone Achieved",
+    description: "Researchers successfully demonstrate quantum computer solving problem faster than classical computers. The breakthrough could revolutionize computational science.",
+    category: "tech",
+    date: "12 hours ago",
+    source: "Tech Innovation",
+    url: "#"
+  },
+  {
+    id: "7",
+    title: "Healthcare System Gets Digital Upgrade",
+    description: "New digital health platform improves patient access and reduces wait times. Hospitals report 40% increase in appointment availability.",
+    category: "science",
+    date: "1 day ago",
+    source: "Health Weekly",
+    url: "#"
+  },
+  {
+    id: "8",
+    title: "Global Climate Summit Produces New Commitments",
+    description: "Nations agree on stronger climate action plans. New targets aim to limit global warming to 1.5 degrees Celsius.",
+    category: "world",
+    date: "1 day ago",
+    source: "Climate Watch",
+    url: "#"
+  },
 ];
+
+const CATEGORIES = [
+  { id: "all", name: "All News" },
+  { id: "tech", name: "Technology" },
+  { id: "business", name: "Business" },
+  { id: "science", name: "Science" },
+  { id: "world", name: "World" },
+];
+
+const CATEGORY_COLORS: { [key: string]: string } = {
+  tech: "bg-blue-500/20 text-blue-400",
+  business: "bg-green-500/20 text-green-400",
+  science: "bg-purple-500/20 text-purple-400",
+  world: "bg-orange-500/20 text-orange-400",
+};
 
 interface NewsProps {
   onBack: () => void;
 }
 
 export function News({ onBack }: NewsProps) {
-  const [selectedSource, setSelectedSource] = useState<string | null>(
-    localStorage.getItem("newsSource") || null
-  );
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [selectedCategory, setSelectedCategory] = useState("all");
 
-  const activeSource = NEWS_SOURCES.find(s => s.id === selectedSource);
-
-  const handleSourceChange = (sourceId: string) => {
-    setSelectedSource(sourceId);
-    localStorage.setItem("newsSource", sourceId);
-  };
-
-  const refresh = () => {
-    if (iframeRef.current) {
-      iframeRef.current.src = iframeRef.current.src;
-    }
-  };
-
-  if (!selectedSource || !activeSource) {
-    return (
-      <div className="h-full w-full bg-gradient-to-br from-[#0a1628] via-[#1a2942] to-[#0a1628] flex flex-col pt-20 p-6">
-        <div className="flex items-center gap-4 mb-6">
-          <Button size="icon" variant="ghost" onClick={onBack}>
-            <ArrowLeft className="w-6 h-6" />
-          </Button>
-          <h1 className="text-3xl font-bold">News</h1>
-        </div>
-
-        <div className="flex-1 flex flex-col items-center justify-center gap-8">
-          <Newspaper className="w-24 h-24 text-orange-400 opacity-30" />
-          <div className="text-center">
-            <h2 className="text-2xl font-semibold mb-2">Choose a News Source</h2>
-            <p className="text-muted-foreground mb-8">Select your preferred news provider to get started</p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 w-full max-w-2xl">
-            {NEWS_SOURCES.map((source) => (
-              <button
-                key={source.id}
-                onClick={() => handleSourceChange(source.id)}
-                className="p-4 bg-card/40 rounded-xl border border-border/50 hover-elevate active-elevate-2 transition-all text-left"
-                data-testid={`button-news-source-${source.id}`}
-              >
-                <p className="font-semibold">{source.name}</p>
-                <p className="text-xs text-muted-foreground mt-1">{source.url}</p>
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const filteredArticles = selectedCategory === "all" 
+    ? MOCK_ARTICLES 
+    : MOCK_ARTICLES.filter(article => article.category === selectedCategory);
 
   return (
     <div className="flex flex-col h-full bg-background">
-      <div className="flex items-center gap-2 p-3 bg-card/80 backdrop-blur-md border-b border-border/50">
+      {/* Header */}
+      <div className="flex items-center gap-3 p-4 bg-card/80 backdrop-blur-md border-b border-border/50">
         <Button
           size="icon"
           variant="ghost"
@@ -86,43 +127,82 @@ export function News({ onBack }: NewsProps) {
         >
           <ArrowLeft className="w-6 h-6" />
         </Button>
-
-        <Button
-          size="icon"
-          variant="ghost"
-          className="w-12 h-12 rounded-full shrink-0"
-          onClick={refresh}
-          data-testid="button-news-refresh"
-        >
-          <RotateCcw className="w-5 h-5" />
-        </Button>
-
-        <h1 className="text-lg font-semibold">{activeSource.name}</h1>
-
-        <Button
-          variant="outline"
-          className="ml-auto"
-          onClick={() => {
-            setSelectedSource(null);
-            localStorage.removeItem("newsSource");
-          }}
-          data-testid="button-news-change-source"
-        >
-          Change Source
-        </Button>
+        <Newspaper className="w-6 h-6 text-orange-400" />
+        <h1 className="text-xl font-semibold flex-1">News Feed</h1>
       </div>
 
-      <div className="flex-1 bg-background overflow-hidden">
-        <iframe scrolling="yes"
-          ref={iframeRef}
-          src={`/api/proxy?url=${encodeURIComponent(activeSource.url)}`}
-          className="w-full h-full border-0"
-          title={activeSource.name}
-          data-testid="iframe-news"
-          sandbox="allow-scripts allow-popups allow-forms allow-pointer-lock allow-modals allow-presentation allow-top-navigation"
-          allow="fullscreen"
-        />
+      {/* Category Filter */}
+      <div className="flex gap-2 p-4 bg-card/50 border-b border-border/50 overflow-x-auto">
+        {CATEGORIES.map(category => (
+          <Button
+            key={category.id}
+            size="sm"
+            variant={selectedCategory === category.id ? "default" : "outline"}
+            onClick={() => setSelectedCategory(category.id)}
+            className="whitespace-nowrap"
+            data-testid={`button-category-${category.id}`}
+          >
+            {category.name}
+          </Button>
+        ))}
       </div>
+
+      {/* Articles List */}
+      <ScrollArea className="flex-1">
+        <div className="p-4 space-y-3">
+          {filteredArticles.length === 0 ? (
+            <div className="flex items-center justify-center h-32 text-muted-foreground">
+              No articles found for this category
+            </div>
+          ) : (
+            filteredArticles.map(article => (
+              <div
+                key={article.id}
+                className="bg-card/40 border border-border/50 rounded-xl p-4 hover-elevate transition-all"
+                data-testid={`news-article-${article.id}`}
+              >
+                <div className="flex items-start justify-between gap-4 mb-2">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-base leading-tight mb-1">
+                      {article.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      {article.description}
+                    </p>
+                  </div>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="flex-shrink-0"
+                    onClick={() => window.open(article.url, '_blank')}
+                    data-testid={`button-read-more-${article.id}`}
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                  </Button>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`text-xs px-2 py-1 rounded-full font-medium ${
+                        CATEGORY_COLORS[article.category]
+                      }`}
+                      data-testid={`tag-category-${article.category}`}
+                    >
+                      {article.category.charAt(0).toUpperCase() + article.category.slice(1)}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {article.source}
+                    </span>
+                  </div>
+                  <span className="text-xs text-muted-foreground">
+                    {article.date}
+                  </span>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </ScrollArea>
     </div>
   );
 }
