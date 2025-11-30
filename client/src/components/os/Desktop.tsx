@@ -10,9 +10,7 @@ import { ExploreSagi } from "../apps/ExploreSagi";
 import { SagiRetail } from "../apps/SagiRetail";
 import { getThemeFromStorage } from "@/lib/themes";
 import { Browser } from "../apps/Browser";
-import { Calculator } from "../apps/Calculator";
 import { Notes } from "../apps/Notes";
-import { FileManager } from "../apps/FileManager";
 import { Settings } from "../apps/Settings";
 import { Photos } from "../apps/Photos";
 import { Weather } from "../apps/Weather";
@@ -32,7 +30,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-type Screen = "home" | "browser" | "calculator" | "notes" | "files" | "settings" | "photos" | "weather" | "videos" | "music" | "news" | "books" | "calendar" | "explore" | "retail" | "testing-board";
+type Screen = "home" | "browser" | "notes" | "settings" | "photos" | "weather" | "videos" | "music" | "news" | "books" | "calendar" | "explore" | "retail" | "testing-board";
 
 export function Desktop() {
   const [isSetupComplete, setIsSetupComplete] = useState(localStorage.getItem("setupComplete") === "true");
@@ -147,14 +145,8 @@ export function Desktop() {
     if (lowerCommand.includes("browser") || lowerCommand.includes("web")) {
       navigateTo("browser");
       setVoiceOpen(false);
-    } else if (lowerCommand.includes("calculator")) {
-      navigateTo("calculator");
-      setVoiceOpen(false);
     } else if (lowerCommand.includes("notes")) {
       navigateTo("notes");
-      setVoiceOpen(false);
-    } else if (lowerCommand.includes("files") || lowerCommand.includes("file manager")) {
-      navigateTo("files");
       setVoiceOpen(false);
     } else if (lowerCommand.includes("settings")) {
       navigateTo("settings");
@@ -238,12 +230,8 @@ export function Desktop() {
         );
       case "browser":
         return <Browser onBack={goBack} />;
-      case "calculator":
-        return <Calculator onBack={goBack} />;
       case "notes":
         return <Notes onBack={goBack} />;
-      case "files":
-        return <FileManager onBack={goBack} />;
       case "settings":
         return <Settings onBack={goBack} isStoreMode={storeMode} />;
       case "photos":

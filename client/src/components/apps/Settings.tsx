@@ -201,8 +201,8 @@ export function Settings({ onBack, isStoreMode }: SettingsProps) {
               <div className="space-y-2 text-sm text-muted-foreground">
                 <p>"Hey, Sagi" - Activate assistant</p>
                 <p>"What time is it?" - Get current time</p>
-                <p>"Open calculator" - Launch calculator app</p>
                 <p>"Open notes" - Launch notes app</p>
+                <p>"Open weather" - Check the weather</p>
               </div>
             </div>
           </div>

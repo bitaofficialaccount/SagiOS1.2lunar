@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Play, Calendar, Cloud, Sun, CloudRain, Image, Bell, ShoppingBag, Zap, Lightbulb, Compass, Mic, Hand, Keyboard, AppWindow, MousePointer2, Settings, Globe, FileText, Calculator, FolderOpen, Video, Music, Newspaper, BookOpen, Grid3x3 } from "lucide-react";
+import { Play, Calendar, Cloud, Sun, CloudRain, Image, Bell, ShoppingBag, Zap, Lightbulb, Compass, Mic, Hand, Keyboard, AppWindow, MousePointer2, Settings, Globe, FileText, Video, Music, Newspaper, BookOpen, Grid3x3 } from "lucide-react";
 import { WidgetCard } from "./WidgetCard";
 import { WidgetManager } from "./WidgetManager";
 import { Button } from "@/components/ui/button";
@@ -390,8 +390,6 @@ export function HomeScreen({ onOpenApp, onOpenVoice, isStoreMode }: HomeScreenPr
         const appGrid = [
           { id: "browser", name: "Browser", icon: Globe, color: "text-blue-400" },
           { id: "notes", name: "Notes", icon: FileText, color: "text-amber-400" },
-          { id: "calculator", name: "Calculator", icon: Calculator, color: "text-teal-400" },
-          { id: "files", name: "Files", icon: FolderOpen, color: "text-sky-400" },
           { id: "videos", name: "Videos", icon: Video, color: "text-red-400" },
           { id: "music", name: "Music", icon: Music, color: "text-blue-400" },
           { id: "news", name: "News", icon: Newspaper, color: "text-orange-400" },

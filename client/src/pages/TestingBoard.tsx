@@ -19,13 +19,9 @@ export function TestingBoard({ onLogout: onLogoutProp, onNavigateApp }: TestingB
     { id: "weather", name: "Weather", color: "bg-cyan-500/20" },
     { id: "videos", name: "Videos", color: "bg-red-500/20" },
     { id: "music", name: "Music", color: "bg-blue-500/20" },
-    { id: "mail", name: "Mail", color: "bg-indigo-500/20" },
-    { id: "maps", name: "Maps", color: "bg-green-500/20" },
     { id: "news", name: "News", color: "bg-orange-500/20" },
     { id: "books", name: "Books", color: "bg-yellow-500/20" },
-    { id: "calculator", name: "Calculator", color: "bg-teal-500/20" },
     { id: "notes", name: "Notes", color: "bg-amber-500/20" },
-    { id: "files", name: "Files", color: "bg-sky-500/20" },
   ];
 
   return (
