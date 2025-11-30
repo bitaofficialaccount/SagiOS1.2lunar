@@ -9,7 +9,8 @@ import {
   Palette,
   User,
   Info,
-  ArrowLeft
+  ArrowLeft,
+  CloudRain
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
@@ -29,6 +30,7 @@ interface SettingsProps {
 
 const sections: SettingsSection[] = [
   { id: "voice", name: "Voice Assistant", icon: <Mic className="w-6 h-6" /> },
+  { id: "weather", name: "Weather", icon: <CloudRain className="w-6 h-6" /> },
   { id: "sound", name: "Sound", icon: <Volume2 className="w-6 h-6" /> },
   { id: "notifications", name: "Notifications", icon: <Bell className="w-6 h-6" /> },
   { id: "privacy", name: "Privacy", icon: <Lock className="w-6 h-6" /> },
@@ -200,6 +202,66 @@ export function Settings({ onBack }: SettingsProps) {
           </div>
         )}
 
+        {activeSection === "weather" && (
+          <div className="space-y-6 max-w-md">
+            <div>
+              <h2 className="text-lg font-medium mb-1">Weather Settings</h2>
+              <p className="text-sm text-muted-foreground">
+                Configure weather service and location
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="weather-provider">Weather Provider</Label>
+                <p className="text-xs text-muted-foreground mb-2">
+                  Choose your weather data source
+                </p>
+                <select
+                  id="weather-provider"
+                  defaultValue={localStorage.getItem("weatherProvider") || "mock"}
+                  onChange={(e) => localStorage.setItem("weatherProvider", e.target.value)}
+                  className="w-full p-2 rounded-lg bg-card/40 border border-border/50 text-foreground text-sm"
+                  data-testid="select-weather-provider"
+                >
+                  <option value="mock">Demo (Mock Weather)</option>
+                  <option value="accuweather">AccuWeather</option>
+                </select>
+              </div>
+
+              <div>
+                <Label htmlFor="country">Country</Label>
+                <p className="text-xs text-muted-foreground mb-2">
+                  Selected during setup
+                </p>
+                <input
+                  type="text"
+                  value={localStorage.getItem("userCountry") || "US"}
+                  disabled
+                  className="w-full p-2 rounded-lg bg-card/40 border border-border/50 text-foreground text-sm opacity-50"
+                  data-testid="input-country-display"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="accuweather-key">AccuWeather API Key (Optional)</Label>
+                <p className="text-xs text-muted-foreground mb-2">
+                  Leave blank to use demo weather
+                </p>
+                <input
+                  type="password"
+                  id="accuweather-key"
+                  placeholder="Enter your AccuWeather API key"
+                  defaultValue={localStorage.getItem("accuweatherKey") || ""}
+                  onChange={(e) => localStorage.setItem("accuweatherKey", e.target.value)}
+                  className="w-full p-2 rounded-lg bg-card/40 border border-border/50 text-foreground text-sm placeholder-muted-foreground"
+                  data-testid="input-accuweather-key"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
         {activeSection === "about" && (
           <div className="space-y-6 max-w-md">
             <div>
@@ -257,7 +319,7 @@ export function Settings({ onBack }: SettingsProps) {
           </div>
         )}
 
-        {!["voice", "about", "display"].includes(activeSection) && (
+        {!["voice", "about", "display", "weather"].includes(activeSection) && (
           <div className="flex items-center justify-center h-full text-muted-foreground">
             <p className="text-lg">Settings for {sections.find(s => s.id === activeSection)?.name} coming soon</p>
           </div>

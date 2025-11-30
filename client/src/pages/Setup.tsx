@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Globe, MessageCircle, Volume2, Wifi, ChevronRight } from "lucide-react";
+import { Globe, MessageCircle, Volume2, User, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -8,11 +8,11 @@ interface SetupProps {
 }
 
 export function Setup({ onComplete }: SetupProps) {
-  const [step, setStep] = useState<"welcome" | "wifi" | "language" | "microphone" | "complete">("welcome");
+  const [step, setStep] = useState<"welcome" | "sagi-id" | "country" | "language" | "microphone" | "complete">("welcome");
+  const [sagiId, setSagiId] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState("US");
   const [selectedLanguage, setSelectedLanguage] = useState("en");
-  const [wifiConnected, setWifiConnected] = useState(false);
   const [microphoneGranted, setMicrophoneGranted] = useState(false);
-  const [networkName, setNetworkName] = useState("");
 
   const handleMicrophoneTest = async () => {
     try {
@@ -23,11 +23,23 @@ export function Setup({ onComplete }: SetupProps) {
     }
   };
 
+  const countries = [
+    { code: "US", name: "United States", flag: "🇺🇸" },
+    { code: "UK", name: "United Kingdom", flag: "🇬🇧" },
+    { code: "CA", name: "Canada", flag: "🇨🇦" },
+    { code: "AU", name: "Australia", flag: "🇦🇺" },
+    { code: "DE", name: "Germany", flag: "🇩🇪" },
+    { code: "FR", name: "France", flag: "🇫🇷" },
+    { code: "JP", name: "Japan", flag: "🇯🇵" },
+    { code: "IN", name: "India", flag: "🇮🇳" },
+  ];
+
   const languages = [
-    { code: "en", name: "English", flag: "🇺🇸" },
-    { code: "es", name: "Spanish", flag: "🇪🇸" },
-    { code: "fr", name: "French", flag: "🇫🇷" },
-    { code: "de", name: "German", flag: "🇩🇪" },
+    { code: "en", name: "English" },
+    { code: "es", name: "Spanish" },
+    { code: "fr", name: "French" },
+    { code: "de", name: "German" },
+    { code: "ja", name: "Japanese" },
   ];
 
   return (
@@ -51,7 +63,7 @@ export function Setup({ onComplete }: SetupProps) {
             <Button
               size="lg"
               className="w-full h-14 text-lg rounded-full"
-              onClick={() => setStep("wifi")}
+              onClick={() => setStep("sagi-id")}
               data-testid="button-setup-start"
             >
               Get Started
@@ -60,27 +72,28 @@ export function Setup({ onComplete }: SetupProps) {
           </div>
         )}
 
-        {/* WiFi Step */}
-        {step === "wifi" && (
+        {/* SAGI ID Step */}
+        {step === "sagi-id" && (
           <div className="space-y-8 animate-fade-in">
             <div>
-              <h2 className="text-3xl font-bold mb-2">Connect to WiFi</h2>
-              <p className="text-muted-foreground">Choose your network (offline mode available)</p>
+              <h2 className="text-3xl font-bold mb-2">Create Your SAGI ID</h2>
+              <p className="text-muted-foreground">Your unique identifier for this device</p>
             </div>
 
             <div className="space-y-3">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Network Name</label>
+                <label className="text-sm font-medium">SAGI ID</label>
                 <div className="flex items-center gap-2 p-3 rounded-xl bg-card/40 backdrop-blur-md border border-border/50">
-                  <Wifi className="w-5 h-5 text-muted-foreground" />
+                  <User className="w-5 h-5 text-muted-foreground" />
                   <Input
-                    value={networkName}
-                    onChange={(e) => setNetworkName(e.target.value)}
-                    placeholder="Enter network name or skip"
+                    value={sagiId}
+                    onChange={(e) => setSagiId(e.target.value)}
+                    placeholder="Enter your SAGI ID"
                     className="border-0 bg-transparent text-base"
-                    data-testid="input-wifi-name"
+                    data-testid="input-sagi-id"
                   />
                 </div>
+                <p className="text-xs text-muted-foreground">Use letters, numbers, and underscores (3-20 characters)</p>
               </div>
             </div>
 
@@ -89,21 +102,67 @@ export function Setup({ onComplete }: SetupProps) {
                 variant="outline"
                 size="lg"
                 className="flex-1 h-12 rounded-full"
-                onClick={() => setStep("language")}
-                data-testid="button-skip-wifi"
+                onClick={() => setStep("welcome")}
+                data-testid="button-back-sagi-id"
               >
-                Skip (Offline)
+                Back
               </Button>
               <Button
                 size="lg"
                 className="flex-1 h-12 rounded-full"
-                onClick={() => {
-                  setWifiConnected(true);
-                  setStep("language");
-                }}
-                data-testid="button-connect-wifi"
+                onClick={() => setStep("country")}
+                disabled={sagiId.length < 3}
+                data-testid="button-next-sagi-id"
               >
-                Connect
+                Next
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Country Step */}
+        {step === "country" && (
+          <div className="space-y-8 animate-fade-in">
+            <div>
+              <h2 className="text-3xl font-bold mb-2">Select Your Country</h2>
+              <p className="text-muted-foreground">For weather and regional settings</p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 max-h-96 overflow-y-auto">
+              {countries.map((country) => (
+                <button
+                  key={country.code}
+                  className={`p-3 rounded-xl text-left font-medium transition-all ${
+                    selectedCountry === country.code
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-card/40 backdrop-blur-md border border-border/50 hover-elevate"
+                  }`}
+                  onClick={() => setSelectedCountry(country.code)}
+                  data-testid={`button-country-${country.code}`}
+                >
+                  <span className="text-xl mr-2">{country.flag}</span>
+                  {country.name}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                size="lg"
+                className="flex-1 h-12 rounded-full"
+                onClick={() => setStep("sagi-id")}
+                data-testid="button-back-country"
+              >
+                Back
+              </Button>
+              <Button
+                size="lg"
+                className="flex-1 h-12 rounded-full"
+                onClick={() => setStep("language")}
+                data-testid="button-next-country"
+              >
+                Next
               </Button>
             </div>
           </div>
@@ -129,7 +188,6 @@ export function Setup({ onComplete }: SetupProps) {
                   onClick={() => setSelectedLanguage(lang.code)}
                   data-testid={`button-language-${lang.code}`}
                 >
-                  <span className="text-2xl mr-3">{lang.flag}</span>
                   {lang.name}
                 </button>
               ))}
@@ -140,7 +198,7 @@ export function Setup({ onComplete }: SetupProps) {
                 variant="outline"
                 size="lg"
                 className="flex-1 h-12 rounded-full"
-                onClick={() => setStep("wifi")}
+                onClick={() => setStep("country")}
                 data-testid="button-back-language"
               >
                 Back
@@ -202,7 +260,12 @@ export function Setup({ onComplete }: SetupProps) {
               <Button
                 size="lg"
                 className="flex-1 h-12 rounded-full"
-                onClick={() => setStep("complete")}
+                onClick={() => {
+                  localStorage.setItem("sagiId", sagiId);
+                  localStorage.setItem("userCountry", selectedCountry);
+                  localStorage.setItem("userLanguage", selectedLanguage);
+                  setStep("complete");
+                }}
                 data-testid="button-next-mic"
               >
                 Next
@@ -221,7 +284,9 @@ export function Setup({ onComplete }: SetupProps) {
             </div>
             <div>
               <h1 className="text-4xl font-bold mb-4">All Set!</h1>
-              <p className="text-lg text-muted-foreground">You're ready to use Sagi. Say "Hey, Sagi" anytime.</p>
+              <p className="text-lg text-muted-foreground">
+                Welcome, <span className="text-primary font-semibold">{sagiId}</span>. You're ready to use Sagi.
+              </p>
             </div>
             <Button
               size="lg"
