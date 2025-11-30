@@ -8,10 +8,16 @@ interface SetupProps {
 }
 
 export function Setup({ onComplete }: SetupProps) {
-  const [step, setStep] = useState<"welcome" | "sagi-id" | "country" | "language" | "microphone" | "complete">("welcome");
+  const [step, setStep] = useState<"welcome" | "sagi-id" | "country" | "language" | "app-providers" | "microphone" | "complete">("welcome");
   const [sagiId, setSagiId] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("US");
   const [selectedLanguage, setSelectedLanguage] = useState("en");
+  const [selectedProviders, setSelectedProviders] = useState<{ [key: string]: string | null }>({
+    mail: null,
+    video: null,
+    books: null,
+    photos: null,
+  });
   const [microphoneGranted, setMicrophoneGranted] = useState(false);
 
   const handleMicrophoneTest = async () => {
@@ -40,6 +46,46 @@ export function Setup({ onComplete }: SetupProps) {
     { code: "fr", name: "French" },
     { code: "de", name: "German" },
     { code: "ja", name: "Japanese" },
+  ];
+
+  const appProviders = [
+    {
+      id: "mail",
+      name: "Mail",
+      options: [
+        { id: "gmail", name: "Gmail" },
+        { id: "outlook", name: "Outlook" },
+        { id: "aol", name: "AOL Mail" },
+        { id: "yahoo", name: "Yahoo Mail" },
+      ],
+    },
+    {
+      id: "video",
+      name: "Videos",
+      options: [
+        { id: "youtube", name: "YouTube" },
+        { id: "netflix", name: "Netflix" },
+        { id: "prime", name: "Amazon Prime Video" },
+      ],
+    },
+    {
+      id: "books",
+      name: "Books",
+      options: [
+        { id: "kindle", name: "Amazon Kindle" },
+        { id: "apple", name: "Apple Books" },
+        { id: "google", name: "Google Play Books" },
+      ],
+    },
+    {
+      id: "photos",
+      name: "Photos",
+      options: [
+        { id: "google", name: "Google Photos" },
+        { id: "microsoft", name: "OneDrive" },
+        { id: "icloud", name: "iCloud" },
+      ],
+    },
   ];
 
   return (
@@ -206,8 +252,67 @@ export function Setup({ onComplete }: SetupProps) {
               <Button
                 size="lg"
                 className="flex-1 h-12 rounded-full"
-                onClick={() => setStep("microphone")}
+                onClick={() => setStep("app-providers")}
                 data-testid="button-next-language"
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* App Providers Step */}
+        {step === "app-providers" && (
+          <div className="space-y-8 animate-fade-in">
+            <div>
+              <h2 className="text-3xl font-bold mb-2">Connect Your Accounts</h2>
+              <p className="text-muted-foreground">Choose your preferred provider for each app (optional)</p>
+            </div>
+
+            <div className="space-y-6">
+              {appProviders.map((app) => (
+                <div key={app.id} className="bg-card/40 backdrop-blur-md border border-border/50 rounded-2xl p-4">
+                  <p className="font-semibold mb-3">{app.name}</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {app.options.map((option) => (
+                      <button
+                        key={option.id}
+                        className={`p-2 rounded-lg text-sm font-medium transition-all ${
+                          selectedProviders[app.id] === option.id
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-secondary/50 hover-elevate"
+                        }`}
+                        onClick={() =>
+                          setSelectedProviders({
+                            ...selectedProviders,
+                            [app.id]: selectedProviders[app.id] === option.id ? null : option.id,
+                          })
+                        }
+                        data-testid={`button-provider-${app.id}-${option.id}`}
+                      >
+                        {option.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                size="lg"
+                className="flex-1 h-12 rounded-full"
+                onClick={() => setStep("language")}
+                data-testid="button-back-providers"
+              >
+                Back
+              </Button>
+              <Button
+                size="lg"
+                className="flex-1 h-12 rounded-full"
+                onClick={() => setStep("microphone")}
+                data-testid="button-next-providers"
               >
                 Next
               </Button>
@@ -252,7 +357,7 @@ export function Setup({ onComplete }: SetupProps) {
                 variant="outline"
                 size="lg"
                 className="flex-1 h-12 rounded-full"
-                onClick={() => setStep("language")}
+                onClick={() => setStep("app-providers")}
                 data-testid="button-back-mic"
               >
                 Back
@@ -264,6 +369,17 @@ export function Setup({ onComplete }: SetupProps) {
                   localStorage.setItem("sagiId", sagiId);
                   localStorage.setItem("userCountry", selectedCountry);
                   localStorage.setItem("userLanguage", selectedLanguage);
+                  
+                  // Save selected providers
+                  Object.entries(selectedProviders).forEach(([app, provider]) => {
+                    if (provider) {
+                      if (app === "mail") localStorage.setItem("mailProvider", provider);
+                      if (app === "video") localStorage.setItem("videoProvider", provider);
+                      if (app === "books") localStorage.setItem("booksProvider", provider);
+                      if (app === "photos") localStorage.setItem("photosProvider", provider);
+                    }
+                  });
+                  
                   setStep("complete");
                 }}
                 data-testid="button-next-mic"
