@@ -12,10 +12,16 @@ import { FileManager } from "../apps/FileManager";
 import { Settings } from "../apps/Settings";
 import { Photos } from "../apps/Photos";
 import { Weather } from "../apps/Weather";
+import { Videos } from "../apps/Videos";
+import { Music } from "../apps/Music";
+import { Mail } from "../apps/Mail";
+import { Maps } from "../apps/Maps";
+import { News } from "../apps/News";
+import { Books } from "../apps/Books";
 import { Mic, Grid2X2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-type Screen = "home" | "browser" | "calculator" | "notes" | "files" | "settings" | "photos" | "weather";
+type Screen = "home" | "browser" | "calculator" | "notes" | "files" | "settings" | "photos" | "weather" | "videos" | "music" | "mail" | "maps" | "news" | "books";
 
 export function Desktop() {
   const [isSetupComplete, setIsSetupComplete] = useState(localStorage.getItem("setupComplete") === "true");
@@ -87,6 +93,24 @@ export function Desktop() {
     } else if (lowerCommand.includes("weather")) {
       navigateTo("weather");
       setVoiceOpen(false);
+    } else if (lowerCommand.includes("videos")) {
+      navigateTo("videos");
+      setVoiceOpen(false);
+    } else if (lowerCommand.includes("music")) {
+      navigateTo("music");
+      setVoiceOpen(false);
+    } else if (lowerCommand.includes("mail")) {
+      navigateTo("mail");
+      setVoiceOpen(false);
+    } else if (lowerCommand.includes("maps")) {
+      navigateTo("maps");
+      setVoiceOpen(false);
+    } else if (lowerCommand.includes("news")) {
+      navigateTo("news");
+      setVoiceOpen(false);
+    } else if (lowerCommand.includes("books")) {
+      navigateTo("books");
+      setVoiceOpen(false);
     } else if (lowerCommand.includes("home")) {
       navigateTo("home");
       setVoiceOpen(false);
@@ -126,6 +150,18 @@ export function Desktop() {
         return <Photos onBack={goBack} />;
       case "weather":
         return <Weather onBack={goBack} />;
+      case "videos":
+        return <Videos onBack={goBack} />;
+      case "music":
+        return <Music onBack={goBack} />;
+      case "mail":
+        return <Mail onBack={goBack} />;
+      case "maps":
+        return <Maps onBack={goBack} />;
+      case "news":
+        return <News onBack={goBack} />;
+      case "books":
+        return <Books onBack={goBack} />;
       default:
         return null;
     }
