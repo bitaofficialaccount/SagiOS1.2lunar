@@ -419,19 +419,26 @@ export function HomeScreen({ onOpenApp, onOpenVoice, isStoreMode }: HomeScreenPr
           </WidgetCard>
         );
       case "weather":
+        const country = localStorage.getItem("userCountry") || "US";
         return (
-          <WidgetCard key="weather" size="medium" className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20">
+          <WidgetCard 
+            key="weather" 
+            size="medium" 
+            className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 cursor-pointer hover-elevate"
+            onClick={() => onOpenApp("weather")}
+            data-testid="widget-weather-card"
+          >
             <div className="flex flex-col h-full">
-              <p className="text-sm text-muted-foreground mb-2">Seattle, WA</p>
+              <p className="text-sm text-muted-foreground mb-2">{country} Weather</p>
               <div className="flex items-center gap-4 mb-4">
                 <Sun className="w-16 h-16 text-yellow-400" />
                 <div>
                   <p className="text-4xl font-light">65°</p>
-                  <p className="text-sm text-muted-foreground">Sunny</p>
+                  <p className="text-sm text-muted-foreground">Click to view live</p>
                 </div>
               </div>
               <div className="mt-auto">
-                <p className="text-xs text-muted-foreground">H 65° L 48°</p>
+                <p className="text-xs text-muted-foreground">View full forecast</p>
                 <div className="flex gap-4 mt-2 text-xs">
                   <div className="text-center">
                     <p className="text-muted-foreground">1 PM</p>
