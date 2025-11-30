@@ -18,10 +18,45 @@ export function HomeScreen({ onOpenApp, onOpenVoice, isStoreMode }: HomeScreenPr
     return saved ? JSON.parse(saved) : DEFAULT_WIDGETS;
   });
   const [widgetManagerOpen, setWidgetManagerOpen] = useState(false);
+  const [draggedWidget, setDraggedWidget] = useState<string | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   useEffect(() => {
     localStorage.setItem("activeWidgets", JSON.stringify(activeWidgets));
   }, [activeWidgets]);
+
+  const handleDragStart = (widgetId: string, e: React.DragEvent) => {
+    setDraggedWidget(widgetId);
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", widgetId);
+  };
+
+  const handleDragOver = (index: number, e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    setDragOverIndex(index);
+  };
+
+  const handleDrop = (targetIndex: number, e: React.DragEvent) => {
+    e.preventDefault();
+    if (!draggedWidget) return;
+
+    const draggedIndex = activeWidgets.indexOf(draggedWidget);
+    if (draggedIndex === -1) return;
+
+    const newWidgets = [...activeWidgets];
+    newWidgets.splice(draggedIndex, 1);
+    newWidgets.splice(targetIndex, 0, draggedWidget);
+    
+    setActiveWidgets(newWidgets);
+    setDraggedWidget(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedWidget(null);
+    setDragOverIndex(null);
+  };
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentDate(new Date()), 60000);
@@ -469,7 +504,23 @@ export function HomeScreen({ onOpenApp, onOpenVoice, isStoreMode }: HomeScreenPr
         </div>
 
         <div className="grid grid-cols-4 grid-rows-auto gap-4">
-          {activeWidgets.map(widgetId => renderWidget(widgetId))}
+          {activeWidgets.map((widgetId, index) => (
+            <div
+              key={widgetId}
+              draggable
+              onDragStart={(e) => handleDragStart(widgetId, e)}
+              onDragOver={(e) => handleDragOver(index, e)}
+              onDrop={(e) => handleDrop(index, e)}
+              onDragEnd={handleDragEnd}
+              onDragLeave={() => setDragOverIndex(null)}
+              className={`transition-all ${
+                draggedWidget === widgetId ? "opacity-50 cursor-grabbing" : "cursor-grab hover:opacity-90"
+              } ${dragOverIndex === index ? "ring-2 ring-primary scale-105" : ""}`}
+              data-testid={`widget-draggable-${widgetId}`}
+            >
+              {renderWidget(widgetId)}
+            </div>
+          ))}
         </div>
       </div>
 
