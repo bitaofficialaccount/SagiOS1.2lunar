@@ -39,11 +39,7 @@ export function HomeScreen({ onOpenApp, onOpenVoice, isStoreMode }: HomeScreenPr
   const { firstDay, daysInMonth } = getDaysInMonth(currentDate);
   const today = currentDate.getDate();
 
-  const [upcomingEvents, setUpcomingEvents] = useState([
-    { time: "11 AM", title: "Team Meeting" },
-    { time: "2 PM", title: "Project Review" },
-    { time: "4:30 PM", title: "Client Call" },
-  ]);
+  const [upcomingEvents, setUpcomingEvents] = useState<Array<{ time: string; title: string }>>([]);
 
   useEffect(() => {
     const saved = localStorage.getItem("sagiCalendarEvents");
@@ -68,11 +64,7 @@ export function HomeScreen({ onOpenApp, onOpenVoice, isStoreMode }: HomeScreenPr
     }
   }, []);
 
-  const forYouItems = [
-    { icon: Bell, title: "New notification", subtitle: "System Update", color: "text-blue-400" },
-    { icon: Cloud, title: "Weather Alert", subtitle: "Rain expected tomorrow", color: "text-cyan-400" },
-    { icon: ShoppingBag, title: "Reminder", subtitle: "Shopping list ready", color: "text-orange-400" },
-  ];
+  const forYouItems: Array<{ icon: any; title: string; subtitle: string; color: string }> = [];
 
   // Store Mode content with educational widgets
   if (isStoreMode) {
@@ -402,7 +394,6 @@ export function HomeScreen({ onOpenApp, onOpenVoice, isStoreMode }: HomeScreenPr
           { id: "files", name: "Files", icon: FolderOpen, color: "text-sky-400" },
           { id: "videos", name: "Videos", icon: Video, color: "text-red-400" },
           { id: "music", name: "Music", icon: Music, color: "text-purple-400" },
-          { id: "maps", name: "Maps", icon: Map, color: "text-green-400" },
           { id: "news", name: "News", icon: Newspaper, color: "text-orange-400" },
         ];
         return (

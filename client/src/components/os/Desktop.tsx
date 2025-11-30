@@ -18,7 +18,6 @@ import { Photos } from "../apps/Photos";
 import { Weather } from "../apps/Weather";
 import { Videos } from "../apps/Videos";
 import { Music } from "../apps/Music";
-import { Maps } from "../apps/Maps";
 import { News } from "../apps/News";
 import { Books } from "../apps/Books";
 import { Calendar } from "../apps/Calendar";
@@ -33,7 +32,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-type Screen = "home" | "browser" | "calculator" | "notes" | "files" | "settings" | "photos" | "weather" | "videos" | "music" | "maps" | "news" | "books" | "calendar" | "explore" | "retail" | "testing-board";
+type Screen = "home" | "browser" | "calculator" | "notes" | "files" | "settings" | "photos" | "weather" | "videos" | "music" | "news" | "books" | "calendar" | "explore" | "retail" | "testing-board";
 
 export function Desktop() {
   const [isSetupComplete, setIsSetupComplete] = useState(localStorage.getItem("setupComplete") === "true");
@@ -172,9 +171,6 @@ export function Desktop() {
     } else if (lowerCommand.includes("music")) {
       navigateTo("music");
       setVoiceOpen(false);
-    } else if (lowerCommand.includes("maps")) {
-      navigateTo("maps");
-      setVoiceOpen(false);
     } else if (lowerCommand.includes("news")) {
       navigateTo("news");
       setVoiceOpen(false);
@@ -258,8 +254,6 @@ export function Desktop() {
         return <Videos onBack={goBack} />;
       case "music":
         return <Music onBack={goBack} />;
-      case "maps":
-        return <Maps onBack={goBack} />;
       case "news":
         return <News onBack={goBack} />;
       case "books":
