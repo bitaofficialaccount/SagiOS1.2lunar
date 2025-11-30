@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Globe, MessageCircle, Volume2, User, ChevronRight, Dices } from "lucide-react";
+import { Globe, MessageCircle, Volume2, User, ChevronRight, Dices, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -532,13 +532,18 @@ export function Setup({ onComplete, onTestingMode, onStoreMode }: SetupProps) {
 
             <div className="bg-card/40 backdrop-blur-md border border-border/50 rounded-2xl p-8 text-center space-y-6">
               <div className="relative inline-block">
+                {microphoneGranted && (
+                  <div className="absolute -top-2 -right-2">
+                    <CheckCircle className="w-8 h-8 text-green-500 fill-green-500" />
+                  </div>
+                )}
                 <div className="w-20 h-20 rounded-full bg-primary/30 flex items-center justify-center mx-auto">
                   <Volume2 className="w-10 h-10 text-primary" />
                 </div>
               </div>
               <div>
                 <p className="text-lg font-medium mb-1">Say "Hey, Sagi"</p>
-                <p className="text-sm text-muted-foreground">
+                <p className={`text-sm ${microphoneGranted ? "text-green-500 font-medium" : "text-muted-foreground"}`}>
                   {microphoneGranted ? "✓ Microphone is working" : "Tap to enable microphone"}
                 </p>
               </div>
