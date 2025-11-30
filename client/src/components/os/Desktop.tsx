@@ -12,7 +12,7 @@ import { FileManager } from "../apps/FileManager";
 import { Settings } from "../apps/Settings";
 import { Photos } from "../apps/Photos";
 import { Weather } from "../apps/Weather";
-import { Mic, Grid2X2 } from "lucide-react";
+import { Mic, Grid2X2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 type Screen = "home" | "browser" | "calculator" | "notes" | "files" | "settings" | "photos" | "weather";
@@ -154,14 +154,25 @@ export function Desktop() {
 
       {/* Persistent Buttons at Bottom Center */}
       <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-[200] flex gap-4">
-        <Button
-          size="icon"
-          className="w-16 h-16 rounded-full bg-secondary/80 hover:bg-secondary shadow-lg"
-          onClick={() => setAppDrawerOpen(true)}
-          data-testid="button-apps-persistent"
-        >
-          <Grid2X2 className="w-7 h-7" />
-        </Button>
+        {currentScreen === "home" ? (
+          <Button
+            size="icon"
+            className="w-16 h-16 rounded-full bg-secondary/80 hover:bg-secondary shadow-lg"
+            onClick={() => setAppDrawerOpen(true)}
+            data-testid="button-apps-persistent"
+          >
+            <Grid2X2 className="w-7 h-7" />
+          </Button>
+        ) : (
+          <Button
+            size="icon"
+            className="w-16 h-16 rounded-full bg-secondary/80 hover:bg-secondary shadow-lg"
+            onClick={goBack}
+            data-testid="button-back-persistent"
+          >
+            <ArrowLeft className="w-7 h-7" />
+          </Button>
+        )}
         <Button
           size="icon"
           className="w-16 h-16 rounded-full bg-primary/90 hover:bg-primary shadow-lg shadow-primary/50"
