@@ -402,16 +402,14 @@ export function Desktop() {
         >
           <Mic className="w-7 h-7" />
         </Button>
-        {currentScreen !== "home" && (
-          <Button
-            size="icon"
-            className="w-16 h-16 rounded-full bg-secondary/80 hover:bg-secondary shadow-lg"
-            onClick={() => setAppDrawerOpen(true)}
-            data-testid="button-apps-persistent"
-          >
-            <Grid2X2 className="w-7 h-7" />
-          </Button>
-        )}
+        <Button
+          size="icon"
+          className="w-16 h-16 rounded-full bg-secondary/80 hover:bg-secondary shadow-lg"
+          onClick={() => setAppDrawerOpen(true)}
+          data-testid="button-apps-persistent"
+        >
+          <Grid2X2 className="w-7 h-7" />
+        </Button>
       </div>
 
       <AppDrawer
