@@ -121,18 +121,6 @@ export function Desktop() {
         {renderScreen()}
       </div>
 
-      {/* Persistent Sagi Button at Bottom Center */}
-      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-[200]">
-        <Button
-          size="icon"
-          className="w-16 h-16 rounded-full bg-primary/90 hover:bg-primary shadow-lg shadow-primary/50"
-          onClick={() => setVoiceOpen(true)}
-          data-testid="button-sagi-persistent"
-        >
-          <Mic className="w-7 h-7" />
-        </Button>
-      </div>
-
       <SideMenu
         isOpen={menuOpen}
         onClose={() => setMenuOpen(false)}
