@@ -1,12 +1,7 @@
 import { useState, useEffect } from "react";
-import { Menu, Wifi, Battery, Volume2, Cloud } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Wifi, Battery, Volume2, Cloud } from "lucide-react";
 
-interface StatusBarProps {
-  onMenuClick: () => void;
-}
-
-export function StatusBar({ onMenuClick }: StatusBarProps) {
+export function StatusBar() {
   const [time, setTime] = useState(new Date());
   const [weather, setWeather] = useState<{ temp: number; condition: string } | null>(null);
 
@@ -48,17 +43,7 @@ export function StatusBar({ onMenuClick }: StatusBarProps) {
   };
 
   return (
-    <div className="flex items-center justify-between px-4 py-2 bg-transparent absolute top-0 left-0 right-0 z-50">
-      <Button
-        size="icon"
-        variant="ghost"
-        className="w-12 h-12 rounded-full"
-        onClick={onMenuClick}
-        data-testid="button-menu"
-      >
-        <Menu className="w-6 h-6" />
-      </Button>
-
+    <div className="flex items-center justify-center px-4 py-2 bg-transparent absolute top-0 left-0 right-0 z-50">
       <div className="flex items-center gap-4">
         {weather && (
           <div className="flex items-center gap-2 text-sm">

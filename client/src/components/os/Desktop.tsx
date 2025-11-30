@@ -1,6 +1,6 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { StatusBar } from "./StatusBar";
-import { SideMenu } from "./SideMenu";
+import { AppDrawer } from "./AppDrawer";
 import { HomeScreen } from "./HomeScreen";
 import { VoiceOverlay } from "./VoiceOverlay";
 import { SagiKeyboard } from "./SagiKeyboard";
@@ -10,21 +10,24 @@ import { Calculator } from "../apps/Calculator";
 import { Notes } from "../apps/Notes";
 import { FileManager } from "../apps/FileManager";
 import { Settings } from "../apps/Settings";
+import { Photos } from "../apps/Photos";
+import { Weather } from "../apps/Weather";
 import { Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-type Screen = "home" | "browser" | "calculator" | "notes" | "files" | "settings";
+type Screen = "home" | "browser" | "calculator" | "notes" | "files" | "settings" | "photos" | "weather";
 
 export function Desktop() {
   const [isSetupComplete, setIsSetupComplete] = useState(localStorage.getItem("setupComplete") === "true");
   const [currentScreen, setCurrentScreen] = useState<Screen>("home");
   const [screenHistory, setScreenHistory] = useState<Screen[]>(["home"]);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [appDrawerOpen, setAppDrawerOpen] = useState(false);
   const [voiceOpen, setVoiceOpen] = useState(false);
   const [globalKeyboardOpen, setGlobalKeyboardOpen] = useState(false);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [isListening, setIsListening] = useState(false);
+  const touchStartY = useRef(0);
 
   useEffect(() => {
     if (!isSetupComplete) {
@@ -46,6 +49,21 @@ export function Desktop() {
     }
   }, [screenHistory]);
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const touchEndY = e.changedTouches[0].clientY;
+    const deltaY = touchStartY.current - touchEndY;
+    if (deltaY > 100 && currentScreen === "home") {
+      setAppDrawerOpen(true);
+    }
+    if (deltaY < -100 && currentScreen !== "home") {
+      goBack();
+    }
+  };
+
   const handleVoiceCommand = useCallback((command: string) => {
     const lowerCommand = command.toLowerCase();
     if (lowerCommand.includes("browser") || lowerCommand.includes("web")) {
@@ -62,6 +80,12 @@ export function Desktop() {
       setVoiceOpen(false);
     } else if (lowerCommand.includes("settings")) {
       navigateTo("settings");
+      setVoiceOpen(false);
+    } else if (lowerCommand.includes("photos")) {
+      navigateTo("photos");
+      setVoiceOpen(false);
+    } else if (lowerCommand.includes("weather")) {
+      navigateTo("weather");
       setVoiceOpen(false);
     } else if (lowerCommand.includes("home")) {
       navigateTo("home");
@@ -85,7 +109,8 @@ export function Desktop() {
         return (
           <HomeScreen 
             onOpenApp={navigateTo} 
-            onOpenVoice={() => setVoiceOpen(true)} 
+            onOpenVoice={() => setVoiceOpen(true)}
+            onOpenAppDrawer={() => setAppDrawerOpen(true)}
           />
         );
       case "browser":
@@ -98,6 +123,10 @@ export function Desktop() {
         return <FileManager onBack={goBack} />;
       case "settings":
         return <Settings onBack={goBack} />;
+      case "photos":
+        return <Photos onBack={goBack} />;
+      case "weather":
+        return <Weather onBack={goBack} />;
       default:
         return null;
     }
@@ -111,13 +140,13 @@ export function Desktop() {
     <div 
       className="h-screen w-screen overflow-hidden bg-gradient-to-br from-[#0a1628] via-[#1a2942] to-[#0a1628] relative"
       data-testid="desktop"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
       
       {!globalKeyboardOpen && !voiceOpen && (
-        <StatusBar 
-          onMenuClick={() => setMenuOpen(true)}
-        />
+        <StatusBar />
       )}
 
       <div className="h-full w-full animate-fade-in">
@@ -136,13 +165,11 @@ export function Desktop() {
         </Button>
       </div>
 
-      <SideMenu
-        isOpen={menuOpen}
-        onClose={() => setMenuOpen(false)}
+      <AppDrawer
+        isOpen={appDrawerOpen}
+        onClose={() => setAppDrawerOpen(false)}
         onNavigate={navigateTo}
         currentScreen={currentScreen}
-        canGoBack={screenHistory.length > 1}
-        onBack={goBack}
       />
 
       <VoiceOverlay
