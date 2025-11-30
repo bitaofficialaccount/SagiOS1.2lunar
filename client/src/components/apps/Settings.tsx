@@ -58,6 +58,7 @@ export function Settings({ onBack, isStoreMode }: SettingsProps) {
   const [selectedTheme, setSelectedTheme] = useState(localStorage.getItem("theme") || "default");
   const [developerMode, setDeveloperMode] = useState(localStorage.getItem("developerMode") === "true");
   const [customWakeWord, setCustomWakeWord] = useState(localStorage.getItem("customWakeWord") || "Hey, Sagi");
+  const [customPronunciation, setCustomPronunciation] = useState(localStorage.getItem("sagiPronunciation") || "Hey S-A-G-I");
 
   return (
     <div className="flex flex-col h-full">
@@ -157,6 +158,26 @@ export function Settings({ onBack, isStoreMode }: SettingsProps) {
                 />
                 <p className="text-xs text-muted-foreground">
                   Change the wake word to activate the assistant (minimum 2 words recommended)
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="custom-pronunciation">How to Pronounce "Sagi"</Label>
+                <Input
+                  id="custom-pronunciation"
+                  type="text"
+                  placeholder="e.g., Hey S-A-G-I"
+                  value={customPronunciation}
+                  onChange={(e) => {
+                    const newPronunciation = e.target.value;
+                    setCustomPronunciation(newPronunciation);
+                    localStorage.setItem("sagiPronunciation", newPronunciation);
+                  }}
+                  disabled={!voiceEnabled}
+                  data-testid="input-pronunciation"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Customize how to pronounce the wake word
                 </p>
               </div>
 
@@ -485,6 +506,7 @@ export function Settings({ onBack, isStoreMode }: SettingsProps) {
                     <li>✓ Voice command testing</li>
                     <li>✓ App state inspection</li>
                   </ul>
+                  <p className="text-xs text-green-400 mt-3">⚡ Please restart the website for changes to take effect</p>
                 </div>
 
                 <Button

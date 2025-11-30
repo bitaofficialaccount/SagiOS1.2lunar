@@ -3,10 +3,10 @@ import { Globe, MessageCircle, Volume2, User, ChevronRight, Dices } from "lucide
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-const playPronunciation = () => {
+const playPronunciation = (text: string = "Hey S-A-G-I") => {
   const synth = window.speechSynthesis;
   synth.cancel();
-  const utterance = new SpeechSynthesisUtterance("Sagi");
+  const utterance = new SpeechSynthesisUtterance(text);
   utterance.rate = 0.8;
   utterance.pitch = 1;
   utterance.volume = 1;
@@ -20,7 +20,8 @@ interface SetupProps {
 }
 
 export function Setup({ onComplete, onTestingMode, onStoreMode }: SetupProps) {
-  const [step, setStep] = useState<"welcome" | "sagi-id" | "country" | "language" | "app-providers" | "microphone" | "complete">("welcome");
+  const [step, setStep] = useState<"welcome" | "pronunciation" | "sagi-id" | "country" | "language" | "app-providers" | "microphone" | "complete">("welcome");
+  const [customPronunciation, setCustomPronunciation] = useState(localStorage.getItem("sagiPronunciation") || "Hey S-A-G-I");
   const [sagiIdMode, setSagiIdMode] = useState<"create" | "login">("create");
   const [sagiId, setSagiId] = useState("");
   const [username, setUsername] = useState("");
@@ -180,13 +181,31 @@ export function Setup({ onComplete, onTestingMode, onStoreMode }: SetupProps) {
               <p className="text-base text-muted-foreground">Your AI-powered smart assistant. Let's get you set up.</p>
             </div>
 
-            <div className="bg-card/40 backdrop-blur-md border border-border/50 rounded-2xl p-6 space-y-4">
-              <div>
-                <h3 className="text-sm font-medium mb-2">How to pronounce "Sagi"</h3>
-                <p className="text-xs text-muted-foreground mb-4">Click the speaker icon to hear the pronunciation</p>
-              </div>
+            <div className="space-y-3">
               <Button
-                onClick={playPronunciation}
+                size="lg"
+                className="w-full h-14 text-lg rounded-full"
+                onClick={() => setStep("pronunciation")}
+                data-testid="button-setup-start"
+              >
+                Get Started
+                <ChevronRight className="w-5 h-5 ml-2" />
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Pronunciation Step */}
+        {step === "pronunciation" && (
+          <div className="space-y-8 animate-fade-in">
+            <div>
+              <h2 className="text-3xl font-bold mb-2">How to Say "Sagi"</h2>
+              <p className="text-muted-foreground">Learn the correct pronunciation</p>
+            </div>
+
+            <div className="bg-card/40 backdrop-blur-md border border-border/50 rounded-2xl p-6 space-y-4">
+              <Button
+                onClick={() => playPronunciation(customPronunciation)}
                 variant="outline"
                 className="w-full gap-2 rounded-lg h-12"
                 data-testid="button-play-pronunciation"
@@ -194,18 +213,41 @@ export function Setup({ onComplete, onTestingMode, onStoreMode }: SetupProps) {
                 <Volume2 className="w-5 h-5" />
                 Play Pronunciation
               </Button>
-              <p className="text-xs text-muted-foreground text-center">SAH-gee</p>
+              <p className="text-sm text-muted-foreground text-center">{customPronunciation}</p>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Customize Pronunciation</label>
+              <Input
+                value={customPronunciation}
+                onChange={(e) => setCustomPronunciation(e.target.value)}
+                placeholder="e.g., Hey S-A-G-I"
+                className="rounded-lg h-12"
+                data-testid="input-pronunciation"
+              />
+              <p className="text-xs text-muted-foreground">How you want to say it (this will be used for wake word)</p>
+            </div>
+
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                size="lg"
+                className="flex-1 h-12 rounded-full"
+                onClick={() => setStep("welcome")}
+                data-testid="button-back-pronunciation"
+              >
+                Back
+              </Button>
               <Button
                 size="lg"
-                className="w-full h-14 text-lg rounded-full"
-                onClick={() => setStep("sagi-id")}
-                data-testid="button-setup-start"
+                className="flex-1 h-12 rounded-full"
+                onClick={() => {
+                  localStorage.setItem("sagiPronunciation", customPronunciation);
+                  setStep("sagi-id");
+                }}
+                data-testid="button-next-pronunciation"
               >
-                Get Started
-                <ChevronRight className="w-5 h-5 ml-2" />
+                Next
               </Button>
             </div>
           </div>
