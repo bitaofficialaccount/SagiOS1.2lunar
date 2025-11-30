@@ -8,6 +8,7 @@ import { Setup } from "@/pages/Setup";
 import { TestingBoard } from "@/pages/TestingBoard";
 import { ExploreSagi } from "../apps/ExploreSagi";
 import { SagiRetail } from "../apps/SagiRetail";
+import { getThemeFromStorage } from "@/lib/themes";
 import { Browser } from "../apps/Browser";
 import { Calculator } from "../apps/Calculator";
 import { Notes } from "../apps/Notes";
@@ -50,6 +51,7 @@ export function Desktop() {
   const [exitUsername, setExitUsername] = useState("");
   const [exitPassword, setExitPassword] = useState("");
   const [exitError, setExitError] = useState("");
+  const [currentTheme, setCurrentTheme] = useState(getThemeFromStorage());
   const touchStartY = useRef(0);
 
   useEffect(() => {
@@ -330,7 +332,7 @@ export function Desktop() {
 
   return (
     <div 
-      className="h-screen w-screen overflow-hidden bg-gradient-to-br from-[#0a1628] via-[#1a2942] to-[#0a1628] relative"
+      className={`h-screen w-screen overflow-hidden ${currentTheme.background} relative`}
       data-testid="desktop"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}

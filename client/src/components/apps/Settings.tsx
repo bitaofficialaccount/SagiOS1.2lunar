@@ -11,8 +11,10 @@ import {
   Info,
   ArrowLeft,
   CloudRain,
-  RotateCcw
+  RotateCcw,
+  Paintbrush
 } from "lucide-react";
+import { themes, getTheme } from "@/lib/themes";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
@@ -37,6 +39,7 @@ const sections: SettingsSection[] = [
   { id: "notifications", name: "Notifications", icon: <Bell className="w-6 h-6" /> },
   { id: "privacy", name: "Privacy", icon: <Lock className="w-6 h-6" /> },
   { id: "personalization", name: "Personalization", icon: <Palette className="w-6 h-6" /> },
+  { id: "themes", name: "Themes & Background", icon: <Paintbrush className="w-6 h-6" /> },
   { id: "account", name: "Account", icon: <User className="w-6 h-6" /> },
   { id: "system", name: "System", icon: <RotateCcw className="w-6 h-6" /> },
   { id: "about", name: "About", icon: <Info className="w-6 h-6" /> },
@@ -50,6 +53,7 @@ export function Settings({ onBack, isStoreMode }: SettingsProps) {
   const [speechRate, setSpeechRate] = useState([50]);
   const [microphoneStatus, setMicrophoneStatus] = useState("ready");
   const [isTesting, setIsTesting] = useState(false);
+  const [selectedTheme, setSelectedTheme] = useState(localStorage.getItem("theme") || "default");
 
   return (
     <div className="flex flex-col h-full">
@@ -260,6 +264,54 @@ export function Settings({ onBack, isStoreMode }: SettingsProps) {
                   className="w-full p-2 rounded-lg bg-card/40 border border-border/50 text-foreground text-sm placeholder-muted-foreground"
                   data-testid="input-accuweather-key"
                 />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeSection === "themes" && (
+          <div className="space-y-6 max-w-2xl">
+            <div>
+              <h2 className="text-lg font-medium mb-1">Themes & Background</h2>
+              <p className="text-sm text-muted-foreground">
+                Choose your desktop background theme
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-medium mb-4">Available Themes</h3>
+              <div className="grid grid-cols-2 gap-4">
+                {themes.map((theme) => (
+                  <button
+                    key={theme.id}
+                    onClick={() => {
+                      setSelectedTheme(theme.id);
+                      localStorage.setItem("theme", theme.id);
+                      window.location.reload();
+                    }}
+                    className={`p-4 rounded-xl border-2 transition-all cursor-pointer ${
+                      selectedTheme === theme.id
+                        ? "border-primary bg-primary/20"
+                        : "border-border/50 bg-card/40 hover:border-primary/50"
+                    }`}
+                    data-testid={`button-theme-${theme.id}`}
+                  >
+                    <div className={`w-full h-16 rounded-lg mb-3 ${theme.background}`} />
+                    <p className="font-medium text-sm">{theme.name}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="p-4 bg-primary/10 rounded-lg border border-primary/30">
+              <div className="flex gap-3">
+                <Paintbrush className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-semibold text-sm mb-1">Custom Themes</p>
+                  <p className="text-xs text-muted-foreground">
+                    More theme customization options coming soon. You'll be able to create custom color schemes and upload your own backgrounds.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
