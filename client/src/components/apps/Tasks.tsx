@@ -86,6 +86,7 @@ export function Tasks({ onBack }: TasksProps) {
               onChange={(e) => setNewTaskTitle(e.target.value)}
               onKeyPress={(e) => e.key === "Enter" && addTask()}
               className="h-12"
+              autoFocus
               data-testid="input-new-task"
             />
             <Button
