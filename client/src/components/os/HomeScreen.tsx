@@ -61,7 +61,9 @@ export function HomeScreen({ onOpenApp, onOpenVoice, isStoreMode }: HomeScreenPr
           setUpcomingEvents(todayEvents);
         }
       } catch (err) {
-        console.error("Failed to load calendar events", err);
+        if (import.meta.env.DEV) {
+          console.error("Failed to load calendar events", err);
+        }
       }
     }
   }, []);

@@ -24,7 +24,9 @@ export function StatusBar() {
           setWeather({ temp: 72, condition: "Sunny" });
         }
       } catch (err) {
-        console.error("Failed to fetch weather:", err);
+        if (import.meta.env.DEV) {
+          console.error("Failed to fetch weather:", err);
+        }
         setWeather({ temp: 72, condition: "Sunny" });
       }
     };

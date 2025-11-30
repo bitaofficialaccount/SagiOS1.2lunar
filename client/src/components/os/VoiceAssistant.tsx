@@ -68,7 +68,9 @@ export function VoiceAssistant({ onCommand, onStateChange }: VoiceAssistantProps
     };
 
     recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
-      console.log("Speech recognition error:", event.error);
+      if (import.meta.env.DEV) {
+        console.log("Speech recognition error:", event.error);
+      }
       if (event.error !== "no-speech") {
         setState("idle");
       }

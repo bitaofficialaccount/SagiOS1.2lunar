@@ -58,7 +58,9 @@ export function VoiceOverlay({ isOpen, onClose, onCommand, onKeyboardToggle }: V
           timestamp: new Date(m.timestamp)
         })));
       } catch (err) {
-        console.error("Failed to load conversation history", err);
+        if (import.meta.env.DEV) {
+          console.error("Failed to load conversation history", err);
+        }
       }
     }
   }, []);
@@ -119,7 +121,9 @@ export function VoiceOverlay({ isOpen, onClose, onCommand, onKeyboardToggle }: V
         }
       }, 100);
     } catch (error) {
-      console.error("Error getting AI response:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error getting AI response:", error);
+      }
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: "assistant",
@@ -186,7 +190,9 @@ export function VoiceOverlay({ isOpen, onClose, onCommand, onKeyboardToggle }: V
         }
       }, 100);
     } catch (error) {
-      console.error("Error getting AI response:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error getting AI response:", error);
+      }
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: "assistant",
