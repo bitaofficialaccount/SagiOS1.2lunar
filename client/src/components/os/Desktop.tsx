@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { StatusBar } from "./StatusBar";
-import { AppDrawer } from "./AppDrawer";
+import { AppDrawer, AppDock } from "./AppDrawer";
 import { HomeScreen } from "./HomeScreen";
 import { VoiceOverlay } from "./VoiceOverlay";
 import { SagiKeyboard } from "./SagiKeyboard";
@@ -383,15 +383,23 @@ export function Desktop() {
         {renderScreen()}
       </div>
 
+      <AppDock
+        onAllApps={() => setAppDrawerOpen(true)}
+        onNavigate={navigateTo}
+        currentScreen={currentScreen}
+        isStoreMode={storeMode}
+        isDeveloperMode={localStorage.getItem("developerMode") === "true"}
+      />
+
       <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-[200] flex gap-4">
         {currentScreen === "home" ? (
           <Button
             size="icon"
             className="w-16 h-16 rounded-full bg-secondary/80 hover:bg-secondary shadow-lg"
-            onClick={() => setAppDrawerOpen(true)}
-            data-testid="button-apps-persistent"
+            onClick={goBack}
+            data-testid="button-back-persistent"
           >
-            <Grid2X2 className="w-7 h-7" />
+            <ArrowLeft className="w-7 h-7" />
           </Button>
         ) : (
           <Button
