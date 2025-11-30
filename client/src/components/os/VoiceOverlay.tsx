@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { Mic, X, ThumbsUp, ThumbsDown, Volume2 } from "lucide-react";
+import { Mic, X, ThumbsUp, ThumbsDown, Volume2, Keyboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SagiKeyboard } from "./SagiKeyboard";
 
 interface Message {
   id: string;
@@ -27,6 +28,7 @@ export function VoiceOverlay({ isOpen, onClose, onCommand }: VoiceOverlayProps) 
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isTextMode, setIsTextMode] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -52,6 +54,28 @@ export function VoiceOverlay({ isOpen, onClose, onCommand }: VoiceOverlayProps) 
       };
       setMessages(prev => [...prev, assistantMessage]);
       onCommand(suggestion);
+    }, 500);
+  };
+
+  const handleTextMessage = (text: string) => {
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      type: "user",
+      content: text,
+      timestamp: new Date(),
+    };
+    setMessages(prev => [...prev, userMessage]);
+    
+    setTimeout(() => {
+      const response = generateResponse(text);
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        type: "assistant",
+        content: response,
+        timestamp: new Date(),
+      };
+      setMessages(prev => [...prev, assistantMessage]);
+      onCommand(text);
     }, 500);
   };
 
@@ -191,22 +215,41 @@ export function VoiceOverlay({ isOpen, onClose, onCommand }: VoiceOverlayProps) 
                 <Mic className={`w-7 h-7 ${isListening ? "animate-pulse" : ""}`} />
               )}
             </Button>
+            <Button
+              size="icon"
+              variant={isTextMode ? "default" : "secondary"}
+              className="w-16 h-16 rounded-full"
+              onClick={() => setIsTextMode(!isTextMode)}
+              data-testid="button-text-mode"
+            >
+              <Keyboard className="w-7 h-7" />
+            </Button>
           </div>
 
-          <div className="flex flex-wrap gap-3 justify-center max-w-3xl mx-auto">
-            {suggestions.map((suggestion, index) => (
-              <button
-                key={index}
-                className="px-5 py-3 bg-card/40 backdrop-blur-md rounded-full text-sm border border-border/50 hover-elevate active-elevate-2 transition-all"
-                onClick={() => handleSuggestionClick(suggestion)}
-                data-testid={`suggestion-${index}`}
-              >
-                {suggestion}
-              </button>
-            ))}
-          </div>
+          {!isTextMode && (
+            <div className="flex flex-wrap gap-3 justify-center max-w-3xl mx-auto">
+              {suggestions.map((suggestion, index) => (
+                <button
+                  key={index}
+                  className="px-5 py-3 bg-card/40 backdrop-blur-md rounded-full text-sm border border-border/50 hover-elevate active-elevate-2 transition-all"
+                  onClick={() => handleSuggestionClick(suggestion)}
+                  data-testid={`suggestion-${index}`}
+                >
+                  {suggestion}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
+
+      <SagiKeyboard
+        isOpen={isTextMode}
+        onSend={handleTextMessage}
+        onClose={() => setIsTextMode(false)}
+        isListening={isListening}
+        transcript={transcript}
+      />
     </div>
   );
 }
