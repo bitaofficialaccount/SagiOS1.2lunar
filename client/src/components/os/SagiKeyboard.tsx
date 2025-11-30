@@ -133,8 +133,8 @@ export function SagiKeyboard({ isOpen, onSend, onClose, onKeyPress, isListening,
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 top-0 bg-[#2a2a2a] backdrop-blur-xl z-[250] p-4 flex flex-col">
-      <div className="flex-1 flex flex-col justify-center mx-auto w-full max-w-full space-y-3">
+    <div className="fixed bottom-0 left-0 right-0 bg-[#2a2a2a] backdrop-blur-xl z-[250] p-4 flex flex-col max-h-[70vh]">
+      <div className="flex-1 flex flex-col justify-end mx-auto w-full max-w-full space-y-3 overflow-y-auto">
         {/* Virtual Keyboard */}
         <div className="space-y-2">
           {keyboardRows.map((row, rowIndex) => (
