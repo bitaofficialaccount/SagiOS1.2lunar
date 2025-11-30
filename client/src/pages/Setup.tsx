@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Globe, MessageCircle, Volume2, User, ChevronRight } from "lucide-react";
+import { Globe, MessageCircle, Volume2, User, ChevronRight, Dices } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -22,6 +22,48 @@ export function Setup({ onComplete }: SetupProps) {
     photos: null,
   });
   const [microphoneGranted, setMicrophoneGranted] = useState(false);
+  const [usernameError, setUsernameError] = useState("");
+
+  const generateRandomUsername = () => {
+    const adjectives = ["Happy", "Swift", "Clever", "Bold", "Bright", "Calm", "Dynamic", "Eager"];
+    const nouns = ["Panda", "Eagle", "Tiger", "Wolf", "Phoenix", "Dragon", "Falcon", "Lion"];
+    const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
+    const noun = nouns[Math.floor(Math.random() * nouns.length)];
+    const num = Math.floor(Math.random() * 999);
+    return `${adj}${noun}${num}`;
+  };
+
+  const isUsernameAvailable = (name: string) => {
+    const savedUsers = JSON.parse(localStorage.getItem("sagiUsers") || "{}");
+    return !savedUsers[name];
+  };
+
+  const handleCreateAccount = () => {
+    if (!isUsernameAvailable(username)) {
+      setUsernameError("Username already taken. Try another!");
+      return;
+    }
+    setUsernameError("");
+
+    // Save credentials
+    const savedUsers = JSON.parse(localStorage.getItem("sagiUsers") || "{}");
+    savedUsers[username] = { password };
+    localStorage.setItem("sagiUsers", JSON.stringify(savedUsers));
+    localStorage.setItem("currentUser", username);
+
+    setStep("country");
+  };
+
+  const handleLogin = () => {
+    const savedUsers = JSON.parse(localStorage.getItem("sagiUsers") || "{}");
+    if (!savedUsers[username] || savedUsers[username].password !== password) {
+      setUsernameError("Invalid username or password!");
+      return;
+    }
+    setUsernameError("");
+    localStorage.setItem("currentUser", username);
+    setStep("country");
+  };
 
   const handleMicrophoneTest = async () => {
     try {
@@ -159,52 +201,54 @@ export function Setup({ onComplete }: SetupProps) {
             </div>
 
             <div className="space-y-3">
-              {sagiIdMode === "create" ? (
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">SAGI ID</label>
-                  <div className="flex items-center gap-2 p-3 rounded-xl bg-card/40 backdrop-blur-md border border-border/50">
-                    <User className="w-5 h-5 text-muted-foreground" />
-                    <Input
-                      value={sagiId}
-                      onChange={(e) => setSagiId(e.target.value)}
-                      placeholder="Enter your SAGI ID"
-                      className="border-0 bg-transparent text-base"
-                      data-testid="input-sagi-id"
-                    />
-                  </div>
-                  <p className="text-xs text-muted-foreground">Use letters, numbers, and underscores (3-20 characters)</p>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Username</label>
+                <div className="flex items-center gap-2 p-3 rounded-xl bg-card/40 backdrop-blur-md border border-border/50">
+                  <User className="w-5 h-5 text-muted-foreground" />
+                  <Input
+                    value={username}
+                    onChange={(e) => {
+                      setUsername(e.target.value);
+                      setUsernameError("");
+                    }}
+                    placeholder="Enter your username"
+                    className="border-0 bg-transparent text-base flex-1"
+                    data-testid="input-username"
+                  />
+                  {sagiIdMode === "create" && (
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-8 w-8 flex-shrink-0"
+                      onClick={() => setUsername(generateRandomUsername())}
+                      data-testid="button-random-username"
+                      title="Generate random username"
+                    >
+                      <Dices className="w-4 h-4" />
+                    </Button>
+                  )}
                 </div>
-              ) : (
-                <>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Username</label>
-                    <div className="flex items-center gap-2 p-3 rounded-xl bg-card/40 backdrop-blur-md border border-border/50">
-                      <User className="w-5 h-5 text-muted-foreground" />
-                      <Input
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        placeholder="Enter your username"
-                        className="border-0 bg-transparent text-base"
-                        data-testid="input-username"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Password</label>
-                    <div className="flex items-center gap-2 p-3 rounded-xl bg-card/40 backdrop-blur-md border border-border/50">
-                      <User className="w-5 h-5 text-muted-foreground" />
-                      <Input
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Enter your password"
-                        type="password"
-                        className="border-0 bg-transparent text-base"
-                        data-testid="input-password"
-                      />
-                    </div>
-                  </div>
-                </>
-              )}
+                {usernameError && (
+                  <p className="text-xs text-red-400">{usernameError}</p>
+                )}
+                {sagiIdMode === "create" && (
+                  <p className="text-xs text-muted-foreground">Must be unique and 3+ characters</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Password</label>
+                <div className="flex items-center gap-2 p-3 rounded-xl bg-card/40 backdrop-blur-md border border-border/50">
+                  <User className="w-5 h-5 text-muted-foreground" />
+                  <Input
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter your password"
+                    type="password"
+                    className="border-0 bg-transparent text-base"
+                    data-testid="input-password"
+                  />
+                </div>
+              </div>
             </div>
 
             <div className="flex gap-3">
@@ -220,8 +264,8 @@ export function Setup({ onComplete }: SetupProps) {
               <Button
                 size="lg"
                 className="flex-1 h-12 rounded-full"
-                onClick={() => setStep("country")}
-                disabled={sagiIdMode === "create" ? sagiId.length < 3 : username.length < 3 || password.length < 3}
+                onClick={sagiIdMode === "create" ? handleCreateAccount : handleLogin}
+                disabled={username.length < 3 || password.length < 3}
                 data-testid="button-next-sagi-id"
               >
                 Next
