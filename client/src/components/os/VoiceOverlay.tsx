@@ -18,6 +18,16 @@ interface VoiceOverlayProps {
   onKeyboardToggle?: (open: boolean) => void;
 }
 
+const speakText = (text: string) => {
+  const synth = window.speechSynthesis;
+  synth.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.rate = 1;
+  utterance.pitch = 1;
+  utterance.volume = 1;
+  synth.speak(utterance);
+};
+
 const suggestions = [
   "What's the weather like today?",
   "Open the web browser",
@@ -97,7 +107,17 @@ export function VoiceOverlay({ isOpen, onClose, onCommand, onKeyboardToggle }: V
         context,
       };
       setMessages(prev => [...prev, assistantMessage]);
+      setIsSpeaking(true);
+      speakText(response);
       onCommand(suggestion);
+      
+      const synth = window.speechSynthesis;
+      const checkSpeaking = setInterval(() => {
+        if (!synth.speaking) {
+          setIsSpeaking(false);
+          clearInterval(checkSpeaking);
+        }
+      }, 100);
     } catch (error) {
       console.error("Error getting AI response:", error);
       const errorMessage: Message = {
@@ -108,6 +128,16 @@ export function VoiceOverlay({ isOpen, onClose, onCommand, onKeyboardToggle }: V
         context,
       };
       setMessages(prev => [...prev, errorMessage]);
+      setIsSpeaking(true);
+      speakText("I'm having trouble connecting to my AI. Please try again.");
+      
+      const synth = window.speechSynthesis;
+      const checkSpeaking = setInterval(() => {
+        if (!synth.speaking) {
+          setIsSpeaking(false);
+          clearInterval(checkSpeaking);
+        }
+      }, 100);
     }
   };
 
@@ -144,7 +174,17 @@ export function VoiceOverlay({ isOpen, onClose, onCommand, onKeyboardToggle }: V
         context,
       };
       setMessages(prev => [...prev, assistantMessage]);
+      setIsSpeaking(true);
+      speakText(response);
       onCommand(text);
+      
+      const synth = window.speechSynthesis;
+      const checkSpeaking = setInterval(() => {
+        if (!synth.speaking) {
+          setIsSpeaking(false);
+          clearInterval(checkSpeaking);
+        }
+      }, 100);
     } catch (error) {
       console.error("Error getting AI response:", error);
       const errorMessage: Message = {
@@ -155,6 +195,16 @@ export function VoiceOverlay({ isOpen, onClose, onCommand, onKeyboardToggle }: V
         context,
       };
       setMessages(prev => [...prev, errorMessage]);
+      setIsSpeaking(true);
+      speakText("I'm having trouble connecting to my AI. Please try again.");
+      
+      const synth = window.speechSynthesis;
+      const checkSpeaking = setInterval(() => {
+        if (!synth.speaking) {
+          setIsSpeaking(false);
+          clearInterval(checkSpeaking);
+        }
+      }, 100);
     }
   };
 
