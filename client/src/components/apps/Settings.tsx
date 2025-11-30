@@ -12,7 +12,8 @@ import {
   ArrowLeft,
   CloudRain,
   RotateCcw,
-  Paintbrush
+  Paintbrush,
+  Code
 } from "lucide-react";
 import { themes, getTheme } from "@/lib/themes";
 import { Switch } from "@/components/ui/switch";
@@ -41,6 +42,7 @@ const sections: SettingsSection[] = [
   { id: "personalization", name: "Personalization", icon: <Palette className="w-6 h-6" /> },
   { id: "account", name: "Account", icon: <User className="w-6 h-6" /> },
   { id: "system", name: "System", icon: <RotateCcw className="w-6 h-6" /> },
+  { id: "developer", name: "Developer Mode", icon: <Code className="w-6 h-6" /> },
   { id: "about", name: "About", icon: <Info className="w-6 h-6" /> },
 ];
 
@@ -53,6 +55,7 @@ export function Settings({ onBack, isStoreMode }: SettingsProps) {
   const [microphoneStatus, setMicrophoneStatus] = useState("ready");
   const [isTesting, setIsTesting] = useState(false);
   const [selectedTheme, setSelectedTheme] = useState(localStorage.getItem("theme") || "default");
+  const [developerMode, setDeveloperMode] = useState(localStorage.getItem("developerMode") === "true");
 
   return (
     <div className="flex flex-col h-full">
@@ -420,7 +423,84 @@ export function Settings({ onBack, isStoreMode }: SettingsProps) {
           </div>
         )}
 
-        {!["voice", "about", "display", "weather", "system", "personalization"].includes(activeSection) && (
+        {activeSection === "developer" && (
+          <div className="space-y-6 max-w-md">
+            <div>
+              <h2 className="text-lg font-medium mb-1">Developer Mode</h2>
+              <p className="text-sm text-muted-foreground">
+                Advanced tools for developers and testers
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="dev-mode">Enable Developer Mode</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Unlock testing tools and debug features
+                  </p>
+                </div>
+                <Switch 
+                  id="dev-mode"
+                  checked={developerMode}
+                  onCheckedChange={(checked) => {
+                    setDeveloperMode(checked);
+                    localStorage.setItem("developerMode", checked.toString());
+                  }}
+                  data-testid="switch-developer-mode"
+                />
+              </div>
+            </div>
+
+            {developerMode && (
+              <div className="space-y-4 pt-4 border-t border-border">
+                <div className="p-4 bg-primary/10 rounded-lg border border-primary/30">
+                  <p className="text-sm font-medium mb-2">Active Features:</p>
+                  <ul className="text-xs text-muted-foreground space-y-1">
+                    <li>✓ Testing Board access in app drawer</li>
+                    <li>✓ Debug console logs (dev build)</li>
+                    <li>✓ localStorage inspection</li>
+                    <li>✓ Voice command testing</li>
+                    <li>✓ App state inspection</li>
+                  </ul>
+                </div>
+
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => {
+                    console.log("App State:", {
+                      developerMode,
+                      localStorage: Object.keys(localStorage),
+                      timestamp: new Date().toISOString()
+                    });
+                    alert("App state logged to console (F12)");
+                  }}
+                  data-testid="button-inspect-state"
+                >
+                  Inspect App State
+                </Button>
+
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => {
+                    if (confirm("Clear all localStorage data?")) {
+                      localStorage.clear();
+                      localStorage.setItem("developerMode", "true");
+                      window.location.reload();
+                    }
+                  }}
+                  data-testid="button-clear-storage"
+                >
+                  Clear Storage
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {!["voice", "about", "display", "weather", "system", "personalization", "developer"].includes(activeSection) && (
           <div className="flex items-center justify-center h-full text-muted-foreground">
             <p className="text-lg">Settings for {sections.find(s => s.id === activeSection)?.name} coming soon</p>
           </div>

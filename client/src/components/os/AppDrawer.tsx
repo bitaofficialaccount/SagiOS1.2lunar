@@ -7,6 +7,7 @@ interface AppDrawerProps {
   onNavigate: (screen: string) => void;
   currentScreen: string;
   isStoreMode?: boolean;
+  isDeveloperMode?: boolean;
 }
 
 const apps = [
@@ -22,24 +23,31 @@ const apps = [
   { id: "settings", name: "Settings", icon: Settings, color: "bg-fuchsia-500/20 text-fuchsia-400" },
 ];
 
-const storeApps = [
-  { id: "retail", name: "SAGI Retail", icon: Zap, color: "bg-gradient-to-br from-amber-500/40 to-orange-500/40 text-amber-400" },
-  { id: "explore", name: "Explore SAGI", icon: Compass, color: "bg-gradient-to-br from-primary/40 to-accent/40 text-accent" },
-  { id: "browser", name: "Browser", icon: Globe, color: "bg-violet-500/20 text-violet-400" },
-  { id: "photos", name: "Photos", icon: Image, color: "bg-pink-500/20 text-pink-400" },
-  { id: "weather", name: "Weather", icon: Cloud, color: "bg-blue-500/20 text-blue-400" },
-  { id: "videos", name: "Videos", icon: Video, color: "bg-red-500/20 text-red-400" },
-  { id: "music", name: "Music", icon: Music, color: "bg-indigo-500/20 text-indigo-400" },
-  { id: "notes", name: "Notes", icon: FileText, color: "bg-amber-500/20 text-amber-400" },
-  { id: "calendar", name: "Calendar", icon: Calendar, color: "bg-rose-500/20 text-rose-400" },
-  { id: "testing-board", name: "Testing Board", icon: SquareCheckBig, color: "bg-gradient-to-br from-cyan-500/40 to-blue-500/40 text-cyan-400" },
-  { id: "news", name: "News", icon: Newspaper, color: "bg-orange-500/20 text-orange-400" },
-  { id: "books", name: "Books", icon: BookOpen, color: "bg-yellow-500/20 text-yellow-400" },
-  { id: "settings", name: "Settings", icon: Settings, color: "bg-fuchsia-500/20 text-fuchsia-400" },
-];
+const getStoreApps = (isDeveloperMode: boolean) => {
+  const apps = [
+    { id: "retail", name: "SAGI Retail", icon: Zap, color: "bg-gradient-to-br from-amber-500/40 to-orange-500/40 text-amber-400" },
+    { id: "explore", name: "Explore SAGI", icon: Compass, color: "bg-gradient-to-br from-primary/40 to-accent/40 text-accent" },
+    { id: "browser", name: "Browser", icon: Globe, color: "bg-violet-500/20 text-violet-400" },
+    { id: "photos", name: "Photos", icon: Image, color: "bg-pink-500/20 text-pink-400" },
+    { id: "weather", name: "Weather", icon: Cloud, color: "bg-blue-500/20 text-blue-400" },
+    { id: "videos", name: "Videos", icon: Video, color: "bg-red-500/20 text-red-400" },
+    { id: "music", name: "Music", icon: Music, color: "bg-indigo-500/20 text-indigo-400" },
+    { id: "notes", name: "Notes", icon: FileText, color: "bg-amber-500/20 text-amber-400" },
+    { id: "calendar", name: "Calendar", icon: Calendar, color: "bg-rose-500/20 text-rose-400" },
+    { id: "news", name: "News", icon: Newspaper, color: "bg-orange-500/20 text-orange-400" },
+    { id: "books", name: "Books", icon: BookOpen, color: "bg-yellow-500/20 text-yellow-400" },
+    { id: "settings", name: "Settings", icon: Settings, color: "bg-fuchsia-500/20 text-fuchsia-400" },
+  ];
+  
+  if (isDeveloperMode) {
+    apps.splice(2, 0, { id: "testing-board", name: "Testing Board", icon: SquareCheckBig, color: "bg-gradient-to-br from-cyan-500/40 to-blue-500/40 text-cyan-400" });
+  }
+  
+  return apps;
+};
 
-export function AppDrawer({ isOpen, onClose, onNavigate, currentScreen, isStoreMode }: AppDrawerProps) {
-  const displayApps = isStoreMode ? storeApps : apps;
+export function AppDrawer({ isOpen, onClose, onNavigate, currentScreen, isStoreMode, isDeveloperMode }: AppDrawerProps) {
+  const displayApps = isStoreMode ? getStoreApps(isDeveloperMode || false) : apps;
   if (!isOpen) return null;
 
   return (

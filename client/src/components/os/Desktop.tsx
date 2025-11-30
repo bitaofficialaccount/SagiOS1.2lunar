@@ -419,6 +419,7 @@ export function Desktop() {
         onNavigate={navigateTo}
         currentScreen={currentScreen}
         isStoreMode={storeMode}
+        isDeveloperMode={localStorage.getItem("developerMode") === "true"}
       />
 
       <VoiceOverlay
