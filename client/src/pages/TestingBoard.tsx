@@ -6,7 +6,13 @@ interface TestingBoardProps {
   onNavigateApp: (app: string) => void;
 }
 
-export function TestingBoard({ onLogout, onNavigateApp }: TestingBoardProps) {
+export function TestingBoard({ onLogout: onLogoutProp, onNavigateApp }: TestingBoardProps) {
+  const handleLogout = () => {
+    localStorage.removeItem("isTestingMode");
+    localStorage.removeItem("setupComplete");
+    localStorage.removeItem("currentUser");
+    onLogoutProp();
+  };
   const testApps = [
     { id: "browser", name: "Browser", color: "bg-blue-500/20" },
     { id: "photos", name: "Photos", color: "bg-pink-500/20" },
@@ -36,7 +42,7 @@ export function TestingBoard({ onLogout, onNavigateApp }: TestingBoardProps) {
             variant="destructive"
             size="lg"
             className="rounded-full"
-            onClick={onLogout}
+            onClick={handleLogout}
             data-testid="button-testing-logout"
           >
             <LogOut className="w-5 h-5 mr-2" />

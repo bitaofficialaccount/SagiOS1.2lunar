@@ -6,6 +6,7 @@ import { VoiceOverlay } from "./VoiceOverlay";
 import { SagiKeyboard } from "./SagiKeyboard";
 import { Setup } from "@/pages/Setup";
 import { TestingBoard } from "@/pages/TestingBoard";
+import { ExploreSagi } from "../apps/ExploreSagi";
 import { Browser } from "../apps/Browser";
 import { Calculator } from "../apps/Calculator";
 import { Notes } from "../apps/Notes";
@@ -22,11 +23,12 @@ import { Books } from "../apps/Books";
 import { Mic, Grid2X2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-type Screen = "home" | "browser" | "calculator" | "notes" | "files" | "settings" | "photos" | "weather" | "videos" | "music" | "mail" | "maps" | "news" | "books";
+type Screen = "home" | "browser" | "calculator" | "notes" | "files" | "settings" | "photos" | "weather" | "videos" | "music" | "mail" | "maps" | "news" | "books" | "explore";
 
 export function Desktop() {
   const [isSetupComplete, setIsSetupComplete] = useState(localStorage.getItem("setupComplete") === "true");
   const [isTestingMode, setIsTestingMode] = useState(localStorage.getItem("isTestingMode") === "true");
+  const [storeMode, setStoreMode] = useState(localStorage.getItem("storeMode") === "true");
   const [currentScreen, setCurrentScreen] = useState<Screen>("home");
   const [screenHistory, setScreenHistory] = useState<Screen[]>(["home"]);
   const [appDrawerOpen, setAppDrawerOpen] = useState(false);
@@ -136,10 +138,13 @@ export function Desktop() {
 
   const handleTestingLogout = () => {
     setIsTestingMode(false);
-    localStorage.removeItem("isTestingMode");
-    localStorage.removeItem("setupComplete");
-    localStorage.removeItem("currentUser");
     setIsSetupComplete(false);
+  };
+
+  const handleStoreModeExit = () => {
+    setStoreMode(false);
+    setIsSetupComplete(false);
+    localStorage.removeItem("storeMode");
   };
 
   const renderScreen = () => {
@@ -177,6 +182,8 @@ export function Desktop() {
         return <News onBack={goBack} />;
       case "books":
         return <Books onBack={goBack} />;
+      case "explore":
+        return <ExploreSagi onBack={goBack} />;
       default:
         return null;
     }
@@ -191,6 +198,24 @@ export function Desktop() {
           setIsTestingMode(false);
         }}
       />
+    );
+  }
+
+  if (storeMode) {
+    return (
+      <div className="h-screen w-screen overflow-hidden">
+        <div className="absolute top-4 right-4 z-50">
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={handleStoreModeExit}
+            data-testid="button-exit-store-mode"
+          >
+            Exit Store Mode
+          </Button>
+        </div>
+        {renderScreen()}
+      </div>
     );
   }
 

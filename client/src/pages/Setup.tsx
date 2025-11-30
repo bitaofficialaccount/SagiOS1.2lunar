@@ -160,15 +160,29 @@ export function Setup({ onComplete, onTestingMode }: SetupProps) {
               <p className="text-xl text-muted-foreground mb-2">Welcome to Sagi</p>
               <p className="text-base text-muted-foreground">Your AI-powered smart assistant. Let's get you set up.</p>
             </div>
-            <Button
-              size="lg"
-              className="w-full h-14 text-lg rounded-full"
-              onClick={() => setStep("sagi-id")}
-              data-testid="button-setup-start"
-            >
-              Get Started
-              <ChevronRight className="w-5 h-5 ml-2" />
-            </Button>
+            <div className="space-y-3">
+              <Button
+                size="lg"
+                className="w-full h-14 text-lg rounded-full"
+                onClick={() => setStep("sagi-id")}
+                data-testid="button-setup-start"
+              >
+                Get Started
+                <ChevronRight className="w-5 h-5 ml-2" />
+              </Button>
+              <Button
+                size="lg"
+                variant="secondary"
+                className="w-full h-14 text-lg rounded-full"
+                onClick={() => {
+                  localStorage.setItem("storeMode", "true");
+                  onComplete?.();
+                }}
+                data-testid="button-store-mode"
+              >
+                Store Mode Demo
+              </Button>
+            </div>
           </div>
         )}
 

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Mic, X, ThumbsUp, ThumbsDown, Volume2, Keyboard } from "lucide-react";
+import { Mic, X, ThumbsUp, ThumbsDown, Volume2, Keyboard, History, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SagiKeyboard } from "./SagiKeyboard";
 
@@ -8,6 +8,7 @@ interface Message {
   type: "user" | "assistant";
   content: string;
   timestamp: Date;
+  context?: string[];
 }
 
 interface VoiceOverlayProps {
@@ -24,24 +25,53 @@ const suggestions = [
   "Tell me a joke",
 ];
 
+const STORAGE_KEY = "sagiConversationHistory";
+
 export function VoiceOverlay({ isOpen, onClose, onCommand, onKeyboardToggle }: VoiceOverlayProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isTextMode, setIsTextMode] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const [allConversations, setAllConversations] = useState<Message[][]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Load conversation history on mount
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setMessages(parsed.map((m: any) => ({
+          ...m,
+          timestamp: new Date(m.timestamp)
+        })));
+      } catch (err) {
+        console.error("Failed to load conversation history", err);
+      }
+    }
+  }, []);
+
+  // Save conversation history to localStorage
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+    }
+  }, [messages]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   const handleSuggestionClick = (suggestion: string) => {
+    const context = getContext();
     const userMessage: Message = {
       id: Date.now().toString(),
       type: "user",
       content: suggestion,
       timestamp: new Date(),
+      context,
     };
     setMessages(prev => [...prev, userMessage]);
     
@@ -52,6 +82,7 @@ export function VoiceOverlay({ isOpen, onClose, onCommand, onKeyboardToggle }: V
         type: "assistant",
         content: response,
         timestamp: new Date(),
+        context,
       };
       setMessages(prev => [...prev, assistantMessage]);
       onCommand(suggestion);
@@ -59,11 +90,13 @@ export function VoiceOverlay({ isOpen, onClose, onCommand, onKeyboardToggle }: V
   };
 
   const handleTextMessage = (text: string) => {
+    const context = getContext();
     const userMessage: Message = {
       id: Date.now().toString(),
       type: "user",
       content: text,
       timestamp: new Date(),
+      context,
     };
     setMessages(prev => [...prev, userMessage]);
     
@@ -74,25 +107,60 @@ export function VoiceOverlay({ isOpen, onClose, onCommand, onKeyboardToggle }: V
         type: "assistant",
         content: response,
         timestamp: new Date(),
+        context,
       };
       setMessages(prev => [...prev, assistantMessage]);
       onCommand(text);
     }, 500);
   };
 
+  const clearHistory = () => {
+    setMessages([]);
+    localStorage.removeItem(STORAGE_KEY);
+    setShowHistory(false);
+  };
+
+  // Build context from recent messages
+  const getContext = (): string[] => {
+    return messages.slice(-4).map(m => `${m.type}: ${m.content}`);
+  };
+
   const generateResponse = (query: string): string => {
     const lowerQuery = query.toLowerCase();
+    const context = getContext();
+    const hasRecentContext = context.length > 0;
+
+    // Context-aware responses
     if (lowerQuery.includes("weather")) {
+      if (hasRecentContext && context.some(c => c.includes("weather"))) {
+        return "I already shared the weather details. It's still 65°F and sunny. Would you like more details about tomorrow's forecast?";
+      }
       return "It's currently 65°F and sunny in your area. Great weather for outdoor activities!";
     }
     if (lowerQuery.includes("time")) {
-      return `The current time is ${new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true })}.`;
+      const time = new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+      if (hasRecentContext && context.some(c => c.includes("time"))) {
+        return `It's now ${time}. Time flies when you're having fun!`;
+      }
+      return `The current time is ${time}.`;
     }
     if (lowerQuery.includes("joke")) {
-      return "Why do programmers prefer dark mode? Because light attracts bugs!";
+      const jokes = [
+        "Why do programmers prefer dark mode? Because light attracts bugs!",
+        "How many programmers does it take to change a light bulb? None, that's a hardware problem!",
+        "Why did the developer go broke? Because he used up all his cache!",
+      ];
+      const randomJoke = jokes[Math.floor(Math.random() * jokes.length)];
+      return randomJoke;
     }
     if (lowerQuery.includes("browser")) {
       return "Opening the web browser for you.";
+    }
+    if (lowerQuery.includes("help") || lowerQuery.includes("what can you do")) {
+      return "I can help you navigate apps, tell you the time or weather, open applications, and answer questions. Just ask!";
+    }
+    if (lowerQuery.includes("hello") || lowerQuery.includes("hi")) {
+      return "Hello! I'm Sagi, your voice assistant. How can I help you today?";
     }
     return "I heard your request. How else can I help you?";
   };
@@ -134,6 +202,62 @@ export function VoiceOverlay({ isOpen, onClose, onCommand, onKeyboardToggle }: V
   };
 
   if (!isOpen) return null;
+
+  // History view
+  if (showHistory) {
+    return (
+      <div className="fixed inset-0 bg-gradient-to-br from-[#0a1628] via-[#1a2942] to-[#0a1628] z-[300] flex flex-col" data-testid="voice-history">
+        <div className="flex items-center justify-between p-6 border-b border-border/50">
+          <div className="flex items-center gap-3">
+            <History className="w-6 h-6 text-primary" />
+            <h2 className="text-2xl font-bold">Conversation History</h2>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              size="icon"
+              variant="secondary"
+              onClick={clearHistory}
+              title="Clear all history"
+              data-testid="button-clear-history"
+            >
+              <Trash2 className="w-5 h-5" />
+            </Button>
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={() => setShowHistory(false)}
+              data-testid="button-close-history"
+            >
+              <X className="w-5 h-5" />
+            </Button>
+          </div>
+        </div>
+        <div className="flex-1 overflow-auto p-6">
+          {messages.length === 0 ? (
+            <div className="flex items-center justify-center h-full text-muted-foreground">
+              <p>No conversation history yet. Start chatting with Sagi!</p>
+            </div>
+          ) : (
+            <div className="space-y-4 max-w-4xl mx-auto">
+              {messages.map((msg) => (
+                <div key={msg.id} className="bg-card/40 rounded-xl p-4 border border-border/50">
+                  <div className="flex items-start justify-between mb-2">
+                    <span className={`text-sm font-semibold ${msg.type === "user" ? "text-primary" : "text-accent"}`}>
+                      {msg.type === "user" ? "You" : "Sagi"}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {msg.timestamp.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
+                    </span>
+                  </div>
+                  <p className="text-sm leading-relaxed">{msg.content}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   if (isTextMode) {
     return (
@@ -287,6 +411,18 @@ export function VoiceOverlay({ isOpen, onClose, onCommand, onKeyboardToggle }: V
             >
               <Keyboard className="w-7 h-7" />
             </Button>
+            {messages.length > 0 && (
+              <Button
+                size="icon"
+                variant="secondary"
+                className="w-16 h-16 rounded-full"
+                onClick={() => setShowHistory(true)}
+                title="View conversation history"
+                data-testid="button-view-history"
+              >
+                <History className="w-7 h-7" />
+              </Button>
+            )}
           </div>
 
           {!isTextMode && (
