@@ -133,12 +133,12 @@ export function SagiKeyboard({ isOpen, onSend, onClose, onKeyPress, isListening,
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-[#2a2a2a] border-t border-border/50 backdrop-blur-xl z-[250] p-2">
-      <div className="max-w-full mx-auto space-y-1">
+    <div className="fixed bottom-0 left-0 right-0 top-0 bg-[#2a2a2a] backdrop-blur-xl z-[250] p-4 flex flex-col">
+      <div className="flex-1 flex flex-col justify-center mx-auto w-full max-w-full space-y-3">
         {/* Virtual Keyboard */}
-        <div className="space-y-1">
+        <div className="space-y-2">
           {keyboardRows.map((row, rowIndex) => (
-            <div key={rowIndex} className="flex justify-center gap-0.5 px-2">
+            <div key={rowIndex} className="flex justify-center gap-1 px-4">
               {row.map((key, keyIndex) => (
                 <button
                   key={`${rowIndex}-${keyIndex}`}
@@ -148,8 +148,8 @@ export function SagiKeyboard({ isOpen, onSend, onClose, onKeyPress, isListening,
                     }
                   }}
                   className={`${
-                    key.special ? "px-3" : "px-2"
-                  } py-1.5 bg-[#3a3a3a] hover:bg-[#4a4a4a] active-elevate-2 rounded text-xs font-medium border border-[#555] transition-all ${
+                    key.special ? "px-6" : "px-4"
+                  } py-4 bg-[#3a3a3a] hover:bg-[#4a4a4a] active-elevate-2 rounded text-lg font-medium border border-[#555] transition-all flex-1 max-w-[80px] ${
                     key.label === "Mic" ? "text-primary" : ""
                   }`}
                   data-testid={`key-${key.label}`}
@@ -161,53 +161,48 @@ export function SagiKeyboard({ isOpen, onSend, onClose, onKeyPress, isListening,
           ))}
 
           {/* Bottom Row - Space, Mic, Backspace, Enter */}
-          <div className="flex justify-center gap-0.5 px-2">
+          <div className="flex justify-center gap-1 px-4">
             <Button
-              size="sm"
               variant="secondary"
-              className="flex-1 h-8 rounded text-xs"
+              className="flex-1 h-16 rounded text-base"
               onClick={() => handleKeyPress(" ")}
               data-testid="key-space"
             >
               Space
             </Button>
             <Button
-              size="sm"
               variant={isRecording ? "default" : "secondary"}
-              className={`h-8 rounded text-xs ${isRecording ? "bg-primary animate-pulse" : ""}`}
+              className={`h-16 rounded text-base px-6 ${isRecording ? "bg-primary animate-pulse" : ""}`}
               onClick={startListening}
               data-testid="button-mic-keyboard"
             >
-              <Mic className={`w-4 h-4 ${isRecording ? "animate-pulse" : ""}`} />
+              <Mic className={`w-6 h-6 ${isRecording ? "animate-pulse" : ""}`} />
             </Button>
             <Button
-              size="sm"
               variant="secondary"
-              className="h-8 rounded text-xs"
+              className="h-16 rounded text-base px-6"
               onClick={() => setInput(input.slice(0, -1))}
               data-testid="button-backspace"
             >
-              <Delete className="w-4 h-4" />
+              <Delete className="w-6 h-6" />
             </Button>
             {onSend && (
               <Button
-                size="sm"
-                className="h-8 rounded text-xs"
+                className="h-16 rounded text-base px-6"
                 onClick={handleSend}
                 disabled={!input.trim()}
                 data-testid="button-send-keyboard"
               >
-                <Send className="w-4 h-4" />
+                <Send className="w-6 h-6" />
               </Button>
             )}
             <Button
-              size="sm"
               variant="ghost"
-              className="h-8 rounded text-xs"
+              className="h-16 rounded text-base px-6"
               onClick={onClose}
               data-testid="button-close-keyboard"
             >
-              <span className="text-lg">×</span>
+              <span className="text-3xl">×</span>
             </Button>
           </div>
         </div>
