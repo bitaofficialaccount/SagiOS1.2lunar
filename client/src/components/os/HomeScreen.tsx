@@ -101,16 +101,30 @@ export function HomeScreen({ onOpenApp, onOpenVoice, isStoreMode }: HomeScreenPr
   }, []);
 
   useEffect(() => {
-    const saved = localStorage.getItem("sagiTasks");
-    if (saved) {
-      try {
-        setTasks(JSON.parse(saved));
-      } catch (err) {
-        if (import.meta.env.DEV) {
-          console.error("Failed to load tasks", err);
+    const loadTasks = () => {
+      const saved = localStorage.getItem("sagiTasks");
+      if (saved) {
+        try {
+          setTasks(JSON.parse(saved));
+        } catch (err) {
+          if (import.meta.env.DEV) {
+            console.error("Failed to load tasks", err);
+          }
         }
       }
-    }
+    };
+    
+    loadTasks();
+    
+    // Listen for storage changes from other tabs/windows
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "sagiTasks") {
+        loadTasks();
+      }
+    };
+    
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   const forYouItems: Array<{ icon: any; title: string; subtitle: string; color: string }> = [];
@@ -336,34 +350,71 @@ export function HomeScreen({ onOpenApp, onOpenVoice, isStoreMode }: HomeScreenPr
             </div>
           </WidgetCard>
         );
-      case "for-you":
+      case "to-do":
+        const todoTasks = tasks.filter(t => !t.completed);
         return (
-          <WidgetCard key="for-you" title="For You" size="medium">
-            <div className="space-y-3">
-              {forYouItems.map((item, index) => (
-                <div key={index} className="flex items-center gap-3 p-2 rounded-lg hover-elevate cursor-pointer">
-                  <div className={`w-10 h-10 rounded-lg bg-secondary/50 flex items-center justify-center ${item.color}`}>
-                    <item.icon className="w-5 h-5" />
+          <WidgetCard key="to-do" title="To Do" size="medium">
+            <div className="space-y-2">
+              {todoTasks.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-4">All tasks done!</p>
+              ) : (
+                todoTasks.slice(0, 5).map((task) => (
+                  <div key={task.id} className="flex items-start gap-2 p-2 rounded-lg hover-elevate cursor-pointer"
+                    onClick={(e) => { e.stopPropagation(); onOpenApp("tasks"); }}
+                  >
+                    <Circle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                    <p className="text-sm truncate">{task.title}</p>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium">{item.title}</p>
-                    <p className="text-xs text-muted-foreground">{item.subtitle}</p>
-                  </div>
-                </div>
-              ))}
+                ))
+              )}
+              {todoTasks.length > 5 && (
+                <p className="text-xs text-muted-foreground pt-2">+{todoTasks.length - 5} more</p>
+              )}
+              {todoTasks.length > 0 && (
+                <Button
+                  onClick={(e) => { e.stopPropagation(); onOpenApp("tasks"); }}
+                  variant="outline"
+                  size="sm"
+                  className="w-full mt-2"
+                  data-testid="button-view-all-tasks"
+                >
+                  View All
+                </Button>
+              )}
             </div>
           </WidgetCard>
         );
-      case "today":
+      case "completed":
+        const completedTasks = tasks.filter(t => t.completed);
         return (
-          <WidgetCard key="today" title="Today" size="medium">
-            <div className="space-y-3">
-              {upcomingEvents.map((event, index) => (
-                <div key={index} className="flex items-start gap-3">
-                  <span className="text-xs text-muted-foreground w-14 shrink-0 pt-0.5">{event.time}</span>
-                  <p className="text-sm">{event.title}</p>
-                </div>
-              ))}
+          <WidgetCard key="completed" title="Completed" size="medium">
+            <div className="space-y-2">
+              {completedTasks.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-4">No completed tasks</p>
+              ) : (
+                completedTasks.slice(0, 5).map((task) => (
+                  <div key={task.id} className="flex items-start gap-2 p-2 rounded-lg hover-elevate cursor-pointer"
+                    onClick={(e) => { e.stopPropagation(); onOpenApp("tasks"); }}
+                  >
+                    <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                    <p className="text-sm truncate line-through text-muted-foreground">{task.title}</p>
+                  </div>
+                ))
+              )}
+              {completedTasks.length > 5 && (
+                <p className="text-xs text-muted-foreground pt-2">+{completedTasks.length - 5} more</p>
+              )}
+              {completedTasks.length > 0 && (
+                <Button
+                  onClick={(e) => { e.stopPropagation(); onOpenApp("tasks"); }}
+                  variant="outline"
+                  size="sm"
+                  className="w-full mt-2"
+                  data-testid="button-view-all-completed"
+                >
+                  View All
+                </Button>
+              )}
             </div>
           </WidgetCard>
         );
