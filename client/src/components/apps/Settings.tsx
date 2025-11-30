@@ -27,6 +27,7 @@ interface SettingsSection {
 
 interface SettingsProps {
   onBack?: () => void;
+  isStoreMode?: boolean;
 }
 
 const sections: SettingsSection[] = [
@@ -41,7 +42,7 @@ const sections: SettingsSection[] = [
   { id: "about", name: "About", icon: <Info className="w-6 h-6" /> },
 ];
 
-export function Settings({ onBack }: SettingsProps) {
+export function Settings({ onBack, isStoreMode }: SettingsProps) {
   const [activeSection, setActiveSection] = useState("voice");
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [wakeWordEnabled, setWakeWordEnabled] = useState(true);

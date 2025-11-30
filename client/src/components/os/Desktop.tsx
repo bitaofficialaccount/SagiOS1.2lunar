@@ -20,8 +20,16 @@ import { Mail } from "../apps/Mail";
 import { Maps } from "../apps/Maps";
 import { News } from "../apps/News";
 import { Books } from "../apps/Books";
-import { Mic, Grid2X2, ArrowLeft } from "lucide-react";
+import { Mic, Grid2X2, ArrowLeft, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 type Screen = "home" | "browser" | "calculator" | "notes" | "files" | "settings" | "photos" | "weather" | "videos" | "music" | "mail" | "maps" | "news" | "books" | "explore";
 
@@ -37,6 +45,10 @@ export function Desktop() {
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [isListening, setIsListening] = useState(false);
+  const [showExitModal, setShowExitModal] = useState(false);
+  const [exitUsername, setExitUsername] = useState("");
+  const [exitPassword, setExitPassword] = useState("");
+  const [exitError, setExitError] = useState("");
   const touchStartY = useRef(0);
 
   useEffect(() => {
@@ -147,10 +159,18 @@ export function Desktop() {
   };
 
   const handleStoreModeExit = () => {
-    setStoreMode(false);
-    setIsSetupComplete(false);
-    localStorage.removeItem("storeMode");
-    localStorage.removeItem("currentUser");
+    if (exitUsername === "SAGI_RETAILMODE" && exitPassword === "retail553") {
+      setStoreMode(false);
+      setIsSetupComplete(false);
+      localStorage.removeItem("storeMode");
+      localStorage.removeItem("currentUser");
+      setShowExitModal(false);
+      setExitUsername("");
+      setExitPassword("");
+      setExitError("");
+    } else {
+      setExitError("Invalid credentials!");
+    }
   };
 
   const renderScreen = () => {
@@ -171,7 +191,7 @@ export function Desktop() {
       case "files":
         return <FileManager onBack={goBack} />;
       case "settings":
-        return <Settings onBack={goBack} />;
+        return <Settings onBack={goBack} isStoreMode={storeMode} />;
       case "photos":
         return <Photos onBack={goBack} />;
       case "weather":
@@ -209,19 +229,87 @@ export function Desktop() {
 
   if (storeMode) {
     return (
-      <div className="h-screen w-screen overflow-hidden">
-        <div className="absolute top-4 right-4 z-50">
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={handleStoreModeExit}
-            data-testid="button-exit-store-mode"
-          >
-            Exit Store Mode
-          </Button>
+      <>
+        <div className="h-screen w-screen overflow-hidden">
+          <div className="absolute top-4 right-4 z-50">
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => setShowExitModal(true)}
+              data-testid="button-exit-store-mode"
+            >
+              Exit Store Mode
+            </Button>
+          </div>
+          {renderScreen()}
         </div>
-        {renderScreen()}
-      </div>
+
+        <Dialog open={showExitModal} onOpenChange={setShowExitModal}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Exit Store Mode</DialogTitle>
+              <DialogDescription>
+                Enter credentials to exit Store Mode
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium">Username</label>
+                <Input
+                  value={exitUsername}
+                  onChange={(e) => {
+                    setExitUsername(e.target.value);
+                    setExitError("");
+                  }}
+                  placeholder="SAGI_RETAILMODE"
+                  className="mt-1"
+                  data-testid="input-exit-username"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium">Password</label>
+                <Input
+                  type="password"
+                  value={exitPassword}
+                  onChange={(e) => {
+                    setExitPassword(e.target.value);
+                    setExitError("");
+                  }}
+                  placeholder="••••••"
+                  className="mt-1"
+                  data-testid="input-exit-password"
+                />
+              </div>
+              {exitError && (
+                <p className="text-sm text-destructive">{exitError}</p>
+              )}
+              <div className="flex gap-2 pt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowExitModal(false);
+                    setExitUsername("");
+                    setExitPassword("");
+                    setExitError("");
+                  }}
+                  className="flex-1"
+                  data-testid="button-cancel-exit"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleStoreModeExit}
+                  className="flex-1"
+                  data-testid="button-confirm-exit"
+                >
+                  <Lock className="w-4 h-4 mr-2" />
+                  Exit
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </>
     );
   }
 
