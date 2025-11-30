@@ -135,6 +135,65 @@ export function VoiceOverlay({ isOpen, onClose, onCommand, onKeyboardToggle }: V
 
   if (!isOpen) return null;
 
+  if (isTextMode) {
+    return (
+      <div className="fixed inset-0 bg-gradient-to-br from-[#0a1628] via-[#1a2942] to-[#0a1628] z-[300] flex flex-col" data-testid="voice-overlay">
+        <div className="absolute top-4 right-4 z-10">
+          <Button
+            size="icon"
+            variant="ghost"
+            className="w-12 h-12 rounded-full"
+            onClick={onClose}
+            data-testid="button-close-voice"
+          >
+            <X className="w-6 h-6" />
+          </Button>
+        </div>
+
+        <div className="flex-1 overflow-auto pt-16 px-8 pb-4">
+          {messages.length > 0 ? (
+            <div className="space-y-6 max-w-4xl mx-auto">
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
+                >
+                  {message.type === "user" ? (
+                    <div className="bg-primary/30 backdrop-blur-md rounded-2xl px-6 py-3 max-w-md border border-primary/50">
+                      <p className="text-lg">{message.content}</p>
+                    </div>
+                  ) : (
+                    <div className="max-w-2xl">
+                      <p className="text-xl leading-relaxed mb-4">{message.content}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+              <div ref={messagesEndRef} />
+            </div>
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <div className="text-center">
+                <p className="text-2xl text-muted-foreground">Start typing or use the microphone to chat</p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <SagiKeyboard
+          isOpen={isTextMode}
+          onSend={handleTextMessage}
+          onClose={() => {
+            setIsTextMode(false);
+            onKeyboardToggle?.(false);
+          }}
+          isListening={isListening}
+          transcript={transcript}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="fixed inset-0 bg-gradient-to-br from-[#0a1628] via-[#1a2942] to-[#0a1628] z-[300]" data-testid="voice-overlay">
       <div className="absolute top-4 right-4">
@@ -246,14 +305,6 @@ export function VoiceOverlay({ isOpen, onClose, onCommand, onKeyboardToggle }: V
           )}
         </div>
       </div>
-
-      <SagiKeyboard
-        isOpen={isTextMode}
-        onSend={handleTextMessage}
-        onClose={() => setIsTextMode(false)}
-        isListening={isListening}
-        transcript={transcript}
-      />
     </div>
   );
 }
