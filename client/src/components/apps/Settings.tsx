@@ -21,6 +21,7 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface SettingsSection {
   id: string;
@@ -56,6 +57,7 @@ export function Settings({ onBack, isStoreMode }: SettingsProps) {
   const [isTesting, setIsTesting] = useState(false);
   const [selectedTheme, setSelectedTheme] = useState(localStorage.getItem("theme") || "default");
   const [developerMode, setDeveloperMode] = useState(localStorage.getItem("developerMode") === "true");
+  const [customWakeWord, setCustomWakeWord] = useState(localStorage.getItem("customWakeWord") || "Hey, Sagi");
 
   return (
     <div className="flex flex-col h-full">
@@ -126,7 +128,7 @@ export function Settings({ onBack, isStoreMode }: SettingsProps) {
                 <div>
                   <Label htmlFor="wake-word">Wake Word Detection</Label>
                   <p className="text-xs text-muted-foreground">
-                    Respond to "Hey, Sagi" wake word
+                    Respond to custom wake word
                   </p>
                 </div>
                 <Switch 
@@ -136,6 +138,26 @@ export function Settings({ onBack, isStoreMode }: SettingsProps) {
                   disabled={!voiceEnabled}
                   data-testid="switch-wake-word"
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="custom-wake-word">Custom Wake Word</Label>
+                <Input
+                  id="custom-wake-word"
+                  type="text"
+                  placeholder="e.g., Hey, Sagi"
+                  value={customWakeWord}
+                  onChange={(e) => {
+                    const newWakeWord = e.target.value;
+                    setCustomWakeWord(newWakeWord);
+                    localStorage.setItem("customWakeWord", newWakeWord);
+                  }}
+                  disabled={!voiceEnabled || !wakeWordEnabled}
+                  data-testid="input-wake-word"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Change the wake word to activate the assistant (minimum 2 words recommended)
+                </p>
               </div>
 
               <div className="space-y-2">

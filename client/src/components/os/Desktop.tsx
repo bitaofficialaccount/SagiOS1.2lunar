@@ -75,7 +75,8 @@ export function Desktop() {
       recognition.onresult = (event: any) => {
         for (let i = event.resultIndex; i < event.results.length; i++) {
           const transcript = event.results[i][0].transcript.toLowerCase();
-          if (transcript.includes("hey sagi") || transcript.includes("hey, sagi")) {
+          const customWakeWord = (localStorage.getItem("customWakeWord") || "Hey, Sagi").toLowerCase();
+          if (transcript.includes(customWakeWord)) {
             setVoiceOpen(true);
             isListeningForWakeWord = false;
             recognition.stop();
