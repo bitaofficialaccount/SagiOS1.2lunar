@@ -45,9 +45,6 @@ export function StatusBar() {
   return (
     <div className="flex items-center justify-center px-4 py-2 bg-transparent absolute top-0 left-0 right-0 z-50">
       <div className="flex items-center gap-4">
-        <span className="text-lg font-medium" data-testid="text-status-time">
-          1
-        </span>
       </div>
     </div>
   );
