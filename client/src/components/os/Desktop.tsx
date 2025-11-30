@@ -5,6 +5,7 @@ import { HomeScreen } from "./HomeScreen";
 import { VoiceOverlay } from "./VoiceOverlay";
 import { SagiKeyboard } from "./SagiKeyboard";
 import { Setup } from "@/pages/Setup";
+import { TestingBoard } from "@/pages/TestingBoard";
 import { Browser } from "../apps/Browser";
 import { Calculator } from "../apps/Calculator";
 import { Notes } from "../apps/Notes";
@@ -25,6 +26,7 @@ type Screen = "home" | "browser" | "calculator" | "notes" | "files" | "settings"
 
 export function Desktop() {
   const [isSetupComplete, setIsSetupComplete] = useState(localStorage.getItem("setupComplete") === "true");
+  const [isTestingMode, setIsTestingMode] = useState(localStorage.getItem("isTestingMode") === "true");
   const [currentScreen, setCurrentScreen] = useState<Screen>("home");
   const [screenHistory, setScreenHistory] = useState<Screen[]>(["home"]);
   const [appDrawerOpen, setAppDrawerOpen] = useState(false);
@@ -127,6 +129,19 @@ export function Desktop() {
     localStorage.setItem("setupComplete", "true");
   };
 
+  const handleTestingMode = (username: string) => {
+    setIsTestingMode(true);
+    setIsSetupComplete(true);
+  };
+
+  const handleTestingLogout = () => {
+    setIsTestingMode(false);
+    localStorage.removeItem("isTestingMode");
+    localStorage.removeItem("setupComplete");
+    localStorage.removeItem("currentUser");
+    setIsSetupComplete(false);
+  };
+
   const renderScreen = () => {
     switch (currentScreen) {
       case "home":
@@ -167,8 +182,20 @@ export function Desktop() {
     }
   };
 
+  if (isTestingMode) {
+    return (
+      <TestingBoard 
+        onLogout={handleTestingLogout}
+        onNavigateApp={(app) => {
+          navigateTo(app as Screen);
+          setIsTestingMode(false);
+        }}
+      />
+    );
+  }
+
   if (!isSetupComplete) {
-    return <Setup onComplete={handleSetupComplete} />;
+    return <Setup onComplete={handleSetupComplete} onTestingMode={handleTestingMode} />;
   }
 
   return (

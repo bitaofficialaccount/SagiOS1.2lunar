@@ -5,9 +5,10 @@ import { Input } from "@/components/ui/input";
 
 interface SetupProps {
   onComplete: () => void;
+  onTestingMode?: (username: string) => void;
 }
 
-export function Setup({ onComplete }: SetupProps) {
+export function Setup({ onComplete, onTestingMode }: SetupProps) {
   const [step, setStep] = useState<"welcome" | "sagi-id" | "country" | "language" | "app-providers" | "microphone" | "complete">("welcome");
   const [sagiIdMode, setSagiIdMode] = useState<"create" | "login">("create");
   const [sagiId, setSagiId] = useState("");
@@ -55,6 +56,14 @@ export function Setup({ onComplete }: SetupProps) {
   };
 
   const handleLogin = () => {
+    // Check for testing credentials
+    if (username === "SAGI_OFFICIAL_TESTING_ID" && password === "sagi123") {
+      localStorage.setItem("currentUser", username);
+      localStorage.setItem("isTestingMode", "true");
+      onTestingMode?.(username);
+      return;
+    }
+
     const savedUsers = JSON.parse(localStorage.getItem("sagiUsers") || "{}");
     if (!savedUsers[username] || savedUsers[username].password !== password) {
       setUsernameError("Invalid username or password!");
