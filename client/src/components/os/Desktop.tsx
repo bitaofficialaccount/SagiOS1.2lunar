@@ -7,6 +7,7 @@ import { SagiKeyboard } from "./SagiKeyboard";
 import { Setup } from "@/pages/Setup";
 import { TestingBoard } from "@/pages/TestingBoard";
 import { ExploreSagi } from "../apps/ExploreSagi";
+import { SagiRetail } from "../apps/SagiRetail";
 import { Browser } from "../apps/Browser";
 import { Calculator } from "../apps/Calculator";
 import { Notes } from "../apps/Notes";
@@ -31,7 +32,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-type Screen = "home" | "browser" | "calculator" | "notes" | "files" | "settings" | "photos" | "weather" | "videos" | "music" | "mail" | "maps" | "news" | "books" | "explore";
+type Screen = "home" | "browser" | "calculator" | "notes" | "files" | "settings" | "photos" | "weather" | "videos" | "music" | "mail" | "maps" | "news" | "books" | "explore" | "retail" | "testing-board";
 
 export function Desktop() {
   const [isSetupComplete, setIsSetupComplete] = useState(localStorage.getItem("setupComplete") === "true");
@@ -211,6 +212,15 @@ export function Desktop() {
         return <Books onBack={goBack} />;
       case "explore":
         return <ExploreSagi onBack={goBack} />;
+      case "retail":
+        return <SagiRetail onBack={goBack} onOpenSettings={() => navigateTo("settings")} />;
+      case "testing-board":
+        return (
+          <TestingBoard 
+            onLogout={goBack}
+            onNavigateApp={(app) => navigateTo(app as Screen)}
+          />
+        );
       default:
         return null;
     }

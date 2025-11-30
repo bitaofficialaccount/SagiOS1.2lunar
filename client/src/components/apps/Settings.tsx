@@ -274,28 +274,38 @@ export function Settings({ onBack, isStoreMode }: SettingsProps) {
               </p>
             </div>
 
-            <div className="space-y-4">
-              <div className="p-4 bg-destructive/10 rounded-lg border border-destructive/30">
-                <h3 className="font-medium text-destructive mb-2">Reset OS</h3>
-                <p className="text-xs text-muted-foreground mb-4">
-                  This will clear all settings, history, notes, and return to the initial setup. This action cannot be undone.
-                </p>
-                <Button
-                  variant="destructive"
-                  className="w-full"
-                  onClick={() => {
-                    if (confirm("Are you sure you want to reset SagiOS? All data will be erased.")) {
-                      localStorage.clear();
-                      window.location.reload();
-                    }
-                  }}
-                  data-testid="button-reset-os"
-                >
-                  <RotateCcw className="w-4 h-4 mr-2" />
-                  Reset to Setup
-                </Button>
+            {!isStoreMode && (
+              <div className="space-y-4">
+                <div className="p-4 bg-destructive/10 rounded-lg border border-destructive/30">
+                  <h3 className="font-medium text-destructive mb-2">Reset OS</h3>
+                  <p className="text-xs text-muted-foreground mb-4">
+                    This will clear all settings, history, notes, and return to the initial setup. This action cannot be undone.
+                  </p>
+                  <Button
+                    variant="destructive"
+                    className="w-full"
+                    onClick={() => {
+                      if (confirm("Are you sure you want to reset SagiOS? All data will be erased.")) {
+                        localStorage.clear();
+                        window.location.reload();
+                      }
+                    }}
+                    data-testid="button-reset-os"
+                  >
+                    <RotateCcw className="w-4 h-4 mr-2" />
+                    Reset to Setup
+                  </Button>
+                </div>
               </div>
-            </div>
+            )}
+
+            {isStoreMode && (
+              <div className="p-4 bg-primary/10 rounded-lg border border-primary/30">
+                <p className="text-sm text-muted-foreground">
+                  Reset is disabled in Store Mode. To reset, please contact store management.
+                </p>
+              </div>
+            )}
           </div>
         )}
 
