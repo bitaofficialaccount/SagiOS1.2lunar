@@ -88,7 +88,7 @@ export function Calendar({ onBack }: { onBack: () => void }) {
 
   return (
     <div className="flex flex-col h-full bg-background">
-      <div className="flex items-center gap-3 p-4 bg-card/80 backdrop-blur-md border-b border-border/50">
+      <div className="flex items-center gap-3 p-4 bg-card/80 backdrop-blur-md border-b border-border/50 sticky top-0 z-10">
         <Button
           size="icon"
           variant="ghost"
@@ -101,8 +101,8 @@ export function Calendar({ onBack }: { onBack: () => void }) {
         <h1 className="text-lg font-semibold">Calendar</h1>
       </div>
 
-      <div className="flex-1 overflow-auto p-6">
-        <div className="max-w-4xl mx-auto">
+      <div className="flex-1 overflow-y-auto p-6 w-full">
+        <div className="w-full max-w-4xl mx-auto">
           {/* Calendar View */}
           <div className="bg-card/40 rounded-2xl border border-border/50 p-6 mb-6">
             <div className="flex items-center justify-between mb-6">
