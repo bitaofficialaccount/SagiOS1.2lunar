@@ -1,4 +1,4 @@
-import { Globe, FileText, Calculator, Settings, FolderOpen, X, Image, Cloud, Video, Music, Mail, Map, Newspaper, BookOpen, Compass, Zap, SquareCheckBig } from "lucide-react";
+import { Globe, FileText, Calculator, Settings, FolderOpen, X, Image, Cloud, Video, Music, Map, Newspaper, BookOpen, Compass, Zap, SquareCheckBig } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface AppDrawerProps {
@@ -16,7 +16,6 @@ const apps = [
   { id: "videos", name: "Videos", icon: Video, color: "bg-red-500/20 text-red-400" },
   { id: "music", name: "Music", icon: Music, color: "bg-purple-500/20 text-purple-400" },
   { id: "notes", name: "Notes", icon: FileText, color: "bg-amber-500/20 text-amber-400" },
-  { id: "mail", name: "Mail", icon: Mail, color: "bg-indigo-500/20 text-indigo-400" },
   { id: "maps", name: "Maps", icon: Map, color: "bg-green-500/20 text-green-400" },
   { id: "news", name: "News", icon: Newspaper, color: "bg-orange-500/20 text-orange-400" },
   { id: "books", name: "Books", icon: BookOpen, color: "bg-yellow-500/20 text-yellow-400" },
@@ -34,7 +33,6 @@ const storeApps = [
   { id: "videos", name: "Videos", icon: Video, color: "bg-red-500/20 text-red-400" },
   { id: "music", name: "Music", icon: Music, color: "bg-purple-500/20 text-purple-400" },
   { id: "notes", name: "Notes", icon: FileText, color: "bg-amber-500/20 text-amber-400" },
-  { id: "mail", name: "Mail", icon: Mail, color: "bg-indigo-500/20 text-indigo-400" },
   { id: "maps", name: "Maps", icon: Map, color: "bg-green-500/20 text-green-400" },
   { id: "testing-board", name: "Testing Board", icon: SquareCheckBig, color: "bg-gradient-to-br from-emerald-500/40 to-green-500/40 text-emerald-400" },
   { id: "news", name: "News", icon: Newspaper, color: "bg-orange-500/20 text-orange-400" },
