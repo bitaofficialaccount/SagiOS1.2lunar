@@ -1,5 +1,5 @@
-import { Play, Settings } from "lucide-react";
-import { useState } from "react";
+import { Play, ArrowLeft } from "lucide-react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 
 interface VideosProps {
@@ -18,22 +18,34 @@ export function Videos({ onBack }: VideosProps) {
   const [selectedProvider, setSelectedProvider] = useState<string | null>(() => {
     return localStorage.getItem("videoProvider") || null;
   });
-
-  const videos = [
-    { title: "Nature Documentary", duration: "45:32" },
-    { title: "Travel Vlog", duration: "28:15" },
-    { title: "Tutorial", duration: "12:45" },
-    { title: "Music Video", duration: "3:45" },
-  ];
+  const [selectedUrl, setSelectedUrl] = useState<string | null>(() => {
+    const saved = localStorage.getItem("videoProvider");
+    if (saved) {
+      const provider = videoProviders.find(p => p.id === saved);
+      return provider?.url || null;
+    }
+    return null;
+  });
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const handleSelectProvider = (providerId: string) => {
-    localStorage.setItem("videoProvider", providerId);
-    setSelectedProvider(providerId);
+    const provider = videoProviders.find(p => p.id === providerId);
+    if (provider) {
+      localStorage.setItem("videoProvider", providerId);
+      setSelectedProvider(providerId);
+      setSelectedUrl(provider.url);
+    }
+  };
+
+  const handleBack = () => {
+    localStorage.removeItem("videoProvider");
+    setSelectedProvider(null);
+    setSelectedUrl(null);
   };
 
   const currentProvider = videoProviders.find(p => p.id === selectedProvider);
 
-  if (!selectedProvider) {
+  if (!selectedUrl) {
     return (
       <div className="h-full w-full bg-gradient-to-br from-[#0a1628] via-[#1a2942] to-[#0a1628] flex flex-col pt-20">
         <div className="flex items-center gap-4 px-6 mb-6">
@@ -48,10 +60,7 @@ export function Videos({ onBack }: VideosProps) {
                 key={provider.id}
                 variant="secondary"
                 className="w-full h-14 text-lg"
-                onClick={() => {
-                  handleSelectProvider(provider.id);
-                  window.location.href = `/api/proxy?url=${encodeURIComponent(provider.url)}`;
-                }}
+                onClick={() => handleSelectProvider(provider.id)}
                 data-testid={`button-provider-${provider.id}`}
               >
                 {provider.name}
@@ -65,41 +74,38 @@ export function Videos({ onBack }: VideosProps) {
   }
 
   return (
-    <div className="h-full w-full bg-gradient-to-br from-[#0a1628] via-[#1a2942] to-[#0a1628] flex flex-col pt-20">
-      <div className="flex items-center justify-between px-6 mb-6">
-        <div className="flex items-center gap-4">
-          <div>
-            <h1 className="text-3xl font-bold">Videos</h1>
-            <p className="text-sm text-muted-foreground">{currentProvider?.name}</p>
-          </div>
-        </div>
+    <div className="flex flex-col h-full bg-background">
+      <div className="flex items-center gap-3 p-4 bg-card/80 backdrop-blur-md border-b border-border/50">
         <Button
           size="icon"
           variant="ghost"
-          onClick={() => {
-            localStorage.removeItem("videoProvider");
-            setSelectedProvider(null);
-          }}
-          data-testid="button-change-provider"
+          className="w-12 h-12 rounded-full shrink-0"
+          onClick={onBack}
+          data-testid="button-videos-back-app"
         >
-          <Settings className="w-5 h-5" />
+          <ArrowLeft className="w-6 h-6" />
         </Button>
+        <Button
+          size="icon"
+          variant="ghost"
+          className="w-12 h-12 rounded-full shrink-0"
+          onClick={handleBack}
+          data-testid="button-videos-change-provider"
+        >
+          <Play className="w-6 h-6" />
+        </Button>
+        <h1 className="text-lg font-semibold">{currentProvider?.name || "Videos"}</h1>
       </div>
 
-      <div className="flex-1 px-6 pb-20 overflow-auto">
-        <div className="space-y-4">
-          {videos.map((video, idx) => (
-            <div key={idx} className="flex items-center gap-4 p-4 bg-card/40 rounded-xl border border-border/50 hover-elevate cursor-pointer">
-              <div className="w-20 h-20 bg-secondary/50 rounded-lg flex items-center justify-center flex-shrink-0">
-                <Play className="w-8 h-8 text-primary" />
-              </div>
-              <div className="flex-1">
-                <p className="font-semibold">{video.title}</p>
-                <p className="text-sm text-muted-foreground">{video.duration}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+      <div className="flex-1 bg-background overflow-hidden">
+        <iframe
+          ref={iframeRef}
+          src={`/api/proxy?url=${encodeURIComponent(selectedUrl)}`}
+          className="w-full h-full border-0"
+          title="Video Provider"
+          data-testid="iframe-videos"
+          sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock"
+        />
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
-import { Mail as MailIcon, ChevronRight, Settings } from "lucide-react";
-import { useState } from "react";
+import { Mail as MailIcon, ArrowLeft } from "lucide-react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 
 interface MailAppProps {
@@ -18,22 +18,34 @@ export function Mail({ onBack }: MailAppProps) {
   const [selectedProvider, setSelectedProvider] = useState<string | null>(() => {
     return localStorage.getItem("mailProvider") || null;
   });
-
-  const emails = [
-    { from: "John Doe", subject: "Project Update", date: "2 min ago", unread: true },
-    { from: "Sarah Smith", subject: "Meeting Tomorrow", date: "1 hour ago", unread: true },
-    { from: "Team Lead", subject: "Weekly Report", date: "3 hours ago", unread: false },
-    { from: "HR Department", subject: "Benefits Renewal", date: "Yesterday", unread: false },
-  ];
+  const [selectedUrl, setSelectedUrl] = useState<string | null>(() => {
+    const saved = localStorage.getItem("mailProvider");
+    if (saved) {
+      const provider = mailProviders.find(p => p.id === saved);
+      return provider?.url || null;
+    }
+    return null;
+  });
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const handleSelectProvider = (providerId: string) => {
-    localStorage.setItem("mailProvider", providerId);
-    setSelectedProvider(providerId);
+    const provider = mailProviders.find(p => p.id === providerId);
+    if (provider) {
+      localStorage.setItem("mailProvider", providerId);
+      setSelectedProvider(providerId);
+      setSelectedUrl(provider.url);
+    }
+  };
+
+  const handleBack = () => {
+    localStorage.removeItem("mailProvider");
+    setSelectedProvider(null);
+    setSelectedUrl(null);
   };
 
   const currentProvider = mailProviders.find(p => p.id === selectedProvider);
 
-  if (!selectedProvider) {
+  if (!selectedUrl) {
     return (
       <div className="h-full w-full bg-gradient-to-br from-[#0a1628] via-[#1a2942] to-[#0a1628] flex flex-col pt-20">
         <div className="flex items-center gap-4 px-6 mb-6">
@@ -49,14 +61,10 @@ export function Mail({ onBack }: MailAppProps) {
                 key={provider.id}
                 variant="secondary"
                 className="w-full h-14 text-lg"
-                onClick={() => {
-                  handleSelectProvider(provider.id);
-                  window.location.href = `/api/proxy?url=${encodeURIComponent(provider.url)}`;
-                }}
+                onClick={() => handleSelectProvider(provider.id)}
                 data-testid={`button-provider-${provider.id}`}
               >
                 {provider.name}
-                <ChevronRight className="w-5 h-5 ml-2" />
               </Button>
             ))}
           </div>
@@ -66,43 +74,38 @@ export function Mail({ onBack }: MailAppProps) {
   }
 
   return (
-    <div className="h-full w-full bg-gradient-to-br from-[#0a1628] via-[#1a2942] to-[#0a1628] flex flex-col pt-20">
-      <div className="flex items-center justify-between px-6 mb-6">
-        <div className="flex items-center gap-4">
-          <MailIcon className="w-8 h-8 text-blue-400" />
-          <div>
-            <h1 className="text-3xl font-bold">Mail</h1>
-            <p className="text-sm text-muted-foreground">{currentProvider?.name}</p>
-          </div>
-        </div>
+    <div className="flex flex-col h-full bg-background">
+      <div className="flex items-center gap-3 p-4 bg-card/80 backdrop-blur-md border-b border-border/50">
         <Button
           size="icon"
           variant="ghost"
-          onClick={() => {
-            localStorage.removeItem("mailProvider");
-            setSelectedProvider(null);
-          }}
-          data-testid="button-change-provider"
+          className="w-12 h-12 rounded-full shrink-0"
+          onClick={onBack}
+          data-testid="button-mail-back-app"
         >
-          <Settings className="w-5 h-5" />
+          <ArrowLeft className="w-6 h-6" />
         </Button>
+        <Button
+          size="icon"
+          variant="ghost"
+          className="w-12 h-12 rounded-full shrink-0"
+          onClick={handleBack}
+          data-testid="button-mail-change-provider"
+        >
+          <MailIcon className="w-6 h-6" />
+        </Button>
+        <h1 className="text-lg font-semibold">{currentProvider?.name || "Mail"}</h1>
       </div>
 
-      <div className="flex-1 px-6 pb-20 overflow-auto">
-        <div className="space-y-2">
-          {emails.map((email, idx) => (
-            <div key={idx} className={`p-4 rounded-xl border border-border/50 hover-elevate cursor-pointer ${email.unread ? "bg-primary/10" : "bg-card/40"}`}>
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <p className={`font-semibold ${email.unread ? "text-white" : ""}`}>{email.from}</p>
-                  <p className="text-sm text-muted-foreground">{email.subject}</p>
-                </div>
-                <ChevronRight className="w-5 h-5 text-muted-foreground" />
-              </div>
-              <p className="text-xs text-muted-foreground mt-2">{email.date}</p>
-            </div>
-          ))}
-        </div>
+      <div className="flex-1 bg-background overflow-hidden">
+        <iframe
+          ref={iframeRef}
+          src={`/api/proxy?url=${encodeURIComponent(selectedUrl)}`}
+          className="w-full h-full border-0"
+          title="Mail Provider"
+          data-testid="iframe-mail"
+          sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock"
+        />
       </div>
     </div>
   );

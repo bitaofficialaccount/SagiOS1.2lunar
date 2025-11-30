@@ -1,5 +1,5 @@
-import { BookOpen, Settings, ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { BookOpen, ArrowLeft } from "lucide-react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 
 interface BooksProps {
@@ -7,7 +7,7 @@ interface BooksProps {
 }
 
 const bookProviders = [
-  { id: "kindle", name: "Amazon Kindle", url: "https://www.amazon.com/kindle" },
+  { id: "kindle", name: "Amazon Kindle", url: "https://read.amazon.com" },
   { id: "apple", name: "Apple Books", url: "https://books.apple.com" },
   { id: "google", name: "Google Play Books", url: "https://play.google.com/books" },
   { id: "scribd", name: "Scribd", url: "https://www.scribd.com" },
@@ -18,22 +18,34 @@ export function Books({ onBack }: BooksProps) {
   const [selectedProvider, setSelectedProvider] = useState<string | null>(() => {
     return localStorage.getItem("booksProvider") || null;
   });
-
-  const books = [
-    { title: "The Great Gatsby", author: "F. Scott Fitzgerald", progress: 65 },
-    { title: "To Kill a Mockingbird", author: "Harper Lee", progress: 45 },
-    { title: "1984", author: "George Orwell", progress: 90 },
-    { title: "Pride and Prejudice", author: "Jane Austen", progress: 20 },
-  ];
+  const [selectedUrl, setSelectedUrl] = useState<string | null>(() => {
+    const saved = localStorage.getItem("booksProvider");
+    if (saved) {
+      const provider = bookProviders.find(p => p.id === saved);
+      return provider?.url || null;
+    }
+    return null;
+  });
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const handleSelectProvider = (providerId: string) => {
-    localStorage.setItem("booksProvider", providerId);
-    setSelectedProvider(providerId);
+    const provider = bookProviders.find(p => p.id === providerId);
+    if (provider) {
+      localStorage.setItem("booksProvider", providerId);
+      setSelectedProvider(providerId);
+      setSelectedUrl(provider.url);
+    }
+  };
+
+  const handleBack = () => {
+    localStorage.removeItem("booksProvider");
+    setSelectedProvider(null);
+    setSelectedUrl(null);
   };
 
   const currentProvider = bookProviders.find(p => p.id === selectedProvider);
 
-  if (!selectedProvider) {
+  if (!selectedUrl) {
     return (
       <div className="h-full w-full bg-gradient-to-br from-[#0a1628] via-[#1a2942] to-[#0a1628] flex flex-col pt-20">
         <div className="flex items-center gap-4 px-6 mb-6">
@@ -49,14 +61,11 @@ export function Books({ onBack }: BooksProps) {
                 key={provider.id}
                 variant="secondary"
                 className="w-full h-14 text-lg"
-                onClick={() => {
-                  handleSelectProvider(provider.id);
-                  window.location.href = `/api/proxy?url=${encodeURIComponent(provider.url)}`;
-                }}
+                onClick={() => handleSelectProvider(provider.id)}
                 data-testid={`button-provider-${provider.id}`}
               >
                 {provider.name}
-                <ChevronRight className="w-5 h-5 ml-2" />
+                <BookOpen className="w-5 h-5 ml-2" />
               </Button>
             ))}
           </div>
@@ -66,44 +75,38 @@ export function Books({ onBack }: BooksProps) {
   }
 
   return (
-    <div className="h-full w-full bg-gradient-to-br from-[#0a1628] via-[#1a2942] to-[#0a1628] flex flex-col pt-20">
-      <div className="flex items-center justify-between px-6 mb-6">
-        <div className="flex items-center gap-4">
-          <BookOpen className="w-8 h-8 text-amber-400" />
-          <div>
-            <h1 className="text-3xl font-bold">Books</h1>
-            <p className="text-sm text-muted-foreground">{currentProvider?.name}</p>
-          </div>
-        </div>
+    <div className="flex flex-col h-full bg-background">
+      <div className="flex items-center gap-3 p-4 bg-card/80 backdrop-blur-md border-b border-border/50">
         <Button
           size="icon"
           variant="ghost"
-          onClick={() => {
-            localStorage.removeItem("booksProvider");
-            setSelectedProvider(null);
-          }}
-          data-testid="button-change-provider"
+          className="w-12 h-12 rounded-full shrink-0"
+          onClick={onBack}
+          data-testid="button-books-back-app"
         >
-          <Settings className="w-5 h-5" />
+          <ArrowLeft className="w-6 h-6" />
         </Button>
+        <Button
+          size="icon"
+          variant="ghost"
+          className="w-12 h-12 rounded-full shrink-0"
+          onClick={handleBack}
+          data-testid="button-books-change-provider"
+        >
+          <BookOpen className="w-6 h-6" />
+        </Button>
+        <h1 className="text-lg font-semibold">{currentProvider?.name || "Books"}</h1>
       </div>
 
-      <div className="flex-1 px-6 pb-20 overflow-auto">
-        <div className="space-y-4">
-          {books.map((book, idx) => (
-            <div key={idx} className="p-4 bg-card/40 rounded-xl border border-border/50 hover-elevate cursor-pointer">
-              <p className="font-semibold mb-1">{book.title}</p>
-              <p className="text-sm text-muted-foreground mb-3">{book.author}</p>
-              <div className="w-full bg-secondary rounded-full h-2">
-                <div
-                  className="bg-amber-400 h-2 rounded-full transition-all"
-                  style={{ width: `${book.progress}%` }}
-                />
-              </div>
-              <p className="text-xs text-muted-foreground mt-2">{book.progress}% completed</p>
-            </div>
-          ))}
-        </div>
+      <div className="flex-1 bg-background overflow-hidden">
+        <iframe
+          ref={iframeRef}
+          src={`/api/proxy?url=${encodeURIComponent(selectedUrl)}`}
+          className="w-full h-full border-0"
+          title="Book Provider"
+          data-testid="iframe-books"
+          sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock"
+        />
       </div>
     </div>
   );
