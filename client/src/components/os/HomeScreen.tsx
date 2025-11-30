@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Play, Calendar, Cloud, Sun, CloudRain, Image, Bell, ShoppingBag, Zap, Lightbulb, Compass, Mic, Hand, Keyboard, AppWindow, MousePointer2, Settings, Globe, FileText, Calculator, FolderOpen, Video, Music, Map, Newspaper, BookOpen, Grid3x3 } from "lucide-react";
+import { Play, Calendar, Cloud, Sun, CloudRain, Image, Bell, ShoppingBag, Zap, Lightbulb, Compass, Mic, Hand, Keyboard, AppWindow, MousePointer2, Settings, Globe, FileText, Calculator, FolderOpen, Video, Music, Newspaper, BookOpen, Grid3x3 } from "lucide-react";
 import { WidgetCard } from "./WidgetCard";
 import { WidgetManager } from "./WidgetManager";
 import { Button } from "@/components/ui/button";
