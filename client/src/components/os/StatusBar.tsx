@@ -48,11 +48,6 @@ export function StatusBar() {
         <span className="text-lg font-medium" data-testid="text-status-time">
           1
         </span>
-        <div className="flex items-center gap-2">
-          <Wifi className="w-5 h-5 opacity-80" />
-          <Volume2 className="w-5 h-5 opacity-80" />
-          <Battery className="w-5 h-5 opacity-80" />
-        </div>
       </div>
     </div>
   );
