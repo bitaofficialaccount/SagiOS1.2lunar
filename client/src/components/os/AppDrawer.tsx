@@ -22,13 +22,14 @@ export function AppDrawer({ isOpen, onClose, onNavigate, currentScreen }: AppDra
   if (!isOpen) return null;
 
   return (
-    <>
+    <div className="fixed inset-0 z-[210]" data-testid="app-drawer">
       <div 
-        className="fixed inset-0 bg-black/50 z-[200]" 
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm" 
         onClick={onClose}
         data-testid="app-drawer-backdrop"
       />
-      <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-[#0a1628] via-[#1a2942] to-transparent z-[210] animate-slide-in-up rounded-t-3xl border-t border-border/50 backdrop-blur-xl" data-testid="app-drawer">
+      
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#0a1628] via-[#1a2942] to-[#1a2942]/80 animate-slide-in-up rounded-t-3xl border-t border-border/50 backdrop-blur-xl">
         <div className="flex items-center justify-between p-6 pb-4 border-b border-border/50">
           <h2 className="text-2xl font-semibold">All Apps</h2>
           <Button
@@ -42,7 +43,7 @@ export function AppDrawer({ isOpen, onClose, onNavigate, currentScreen }: AppDra
           </Button>
         </div>
 
-        <div className="p-6 max-h-96 overflow-auto">
+        <div className="p-6 max-h-[60vh] overflow-auto">
           <div className="grid grid-cols-3 gap-4">
             {apps.map((app) => (
               <button
@@ -63,6 +64,6 @@ export function AppDrawer({ isOpen, onClose, onNavigate, currentScreen }: AppDra
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
