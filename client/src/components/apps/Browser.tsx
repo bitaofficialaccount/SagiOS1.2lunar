@@ -226,7 +226,8 @@ export function Browser({ onBack }: BrowserProps) {
             className="w-full h-full border-0"
             title={activeTab.title}
             data-testid="iframe-browser"
-            sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock"
+            sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock allow-modals allow-presentation"
+            allow="fullscreen"
           />
         ) : (
           <div className="h-full flex flex-col items-center justify-center p-8">

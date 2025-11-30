@@ -105,7 +105,8 @@ export function Books({ onBack }: BooksProps) {
           className="w-full h-full border-0"
           title="Book Provider"
           data-testid="iframe-books"
-          sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock"
+          sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock allow-modals allow-presentation"
+          allow="fullscreen"
         />
       </div>
     </div>

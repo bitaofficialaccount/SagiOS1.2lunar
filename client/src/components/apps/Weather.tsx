@@ -60,7 +60,8 @@ export function Weather({ onBack }: WeatherProps) {
           className="w-full h-full border-0"
           title="Weather"
           data-testid="iframe-weather"
-          sandbox="allow-scripts allow-same-origin"
+          sandbox="allow-scripts allow-same-origin allow-modals allow-presentation allow-popups allow-forms allow-pointer-lock"
+          allow="fullscreen"
         />
       </div>
     </div>

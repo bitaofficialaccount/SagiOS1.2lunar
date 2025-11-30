@@ -119,7 +119,8 @@ export function News({ onBack }: NewsProps) {
           className="w-full h-full border-0"
           title={activeSource.name}
           data-testid="iframe-news"
-          sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock"
+          sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock allow-modals allow-presentation"
+          allow="fullscreen"
         />
       </div>
     </div>

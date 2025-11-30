@@ -104,7 +104,8 @@ export function Videos({ onBack }: VideosProps) {
           className="w-full h-full border-0"
           title="Video Provider"
           data-testid="iframe-videos"
-          sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock"
+          sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock allow-modals allow-presentation"
+            allow="fullscreen"
         />
       </div>
     </div>
