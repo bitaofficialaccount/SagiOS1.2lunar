@@ -3,6 +3,16 @@ import { Globe, MessageCircle, Volume2, User, ChevronRight, Dices } from "lucide
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+const playPronunciation = () => {
+  const synth = window.speechSynthesis;
+  synth.cancel();
+  const utterance = new SpeechSynthesisUtterance("Sagi");
+  utterance.rate = 0.8;
+  utterance.pitch = 1;
+  utterance.volume = 1;
+  synth.speak(utterance);
+};
+
 interface SetupProps {
   onComplete: () => void;
   onTestingMode?: (username: string) => void;
@@ -169,6 +179,24 @@ export function Setup({ onComplete, onTestingMode, onStoreMode }: SetupProps) {
               <p className="text-xl text-muted-foreground mb-2">Welcome to Sagi</p>
               <p className="text-base text-muted-foreground">Your AI-powered smart assistant. Let's get you set up.</p>
             </div>
+
+            <div className="bg-card/40 backdrop-blur-md border border-border/50 rounded-2xl p-6 space-y-4">
+              <div>
+                <h3 className="text-sm font-medium mb-2">How to pronounce "Sagi"</h3>
+                <p className="text-xs text-muted-foreground mb-4">Click the speaker icon to hear the pronunciation</p>
+              </div>
+              <Button
+                onClick={playPronunciation}
+                variant="outline"
+                className="w-full gap-2 rounded-lg h-12"
+                data-testid="button-play-pronunciation"
+              >
+                <Volume2 className="w-5 h-5" />
+                Play Pronunciation
+              </Button>
+              <p className="text-xs text-muted-foreground text-center">SAH-gee</p>
+            </div>
+
             <div className="space-y-3">
               <Button
                 size="lg"
