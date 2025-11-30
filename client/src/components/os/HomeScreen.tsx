@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Play, Calendar, Cloud, Sun, CloudRain, Image, Bell, ShoppingBag, Zap, Lightbulb, Compass, Mic, Hand, Keyboard, AppWindow, MousePointer2, Settings, Globe, FileText, Video, Music, Newspaper, BookOpen, Grid3x3 } from "lucide-react";
+import { Play, Calendar, Cloud, Sun, CloudRain, Image, Bell, ShoppingBag, Zap, Lightbulb, Compass, Mic, Hand, Keyboard, AppWindow, MousePointer2, Settings, Globe, FileText, Video, Music, Newspaper, BookOpen, Grid3x3, CheckCircle2, Circle } from "lucide-react";
 import { WidgetCard } from "./WidgetCard";
 import { WidgetManager } from "./WidgetManager";
 import { Button } from "@/components/ui/button";
@@ -40,6 +40,7 @@ export function HomeScreen({ onOpenApp, onOpenVoice, isStoreMode }: HomeScreenPr
   const today = currentDate.getDate();
 
   const [upcomingEvents, setUpcomingEvents] = useState<Array<{ time: string; title: string }>>([]);
+  const [tasks, setTasks] = useState<Array<{ id: string; title: string; completed: boolean }>>([]);
 
   useEffect(() => {
     const saved = localStorage.getItem("sagiCalendarEvents");
@@ -59,6 +60,19 @@ export function HomeScreen({ onOpenApp, onOpenVoice, isStoreMode }: HomeScreenPr
       } catch (err) {
         if (import.meta.env.DEV) {
           console.error("Failed to load calendar events", err);
+        }
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("sagiTasks");
+    if (saved) {
+      try {
+        setTasks(JSON.parse(saved));
+      } catch (err) {
+        if (import.meta.env.DEV) {
+          console.error("Failed to load tasks", err);
         }
       }
     }
@@ -287,34 +301,45 @@ export function HomeScreen({ onOpenApp, onOpenVoice, isStoreMode }: HomeScreenPr
             </div>
           </WidgetCard>
         );
-      case "for-you":
+      case "to-do":
+        const todoTasks = tasks.filter(t => !t.completed);
         return (
-          <WidgetCard key="for-you" title="For You" size="medium">
-            <div className="space-y-3">
-              {forYouItems.map((item, index) => (
-                <div key={index} className="flex items-center gap-3 p-2 rounded-lg hover-elevate cursor-pointer">
-                  <div className={`w-10 h-10 rounded-lg bg-secondary/50 flex items-center justify-center ${item.color}`}>
-                    <item.icon className="w-5 h-5" />
+          <WidgetCard key="to-do" title="To Do" size="medium">
+            <div className="space-y-2">
+              {todoTasks.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-4">All tasks done!</p>
+              ) : (
+                todoTasks.slice(0, 5).map((task) => (
+                  <div key={task.id} className="flex items-start gap-2 p-2 rounded-lg hover-elevate cursor-pointer">
+                    <Circle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                    <p className="text-sm truncate">{task.title}</p>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium">{item.title}</p>
-                    <p className="text-xs text-muted-foreground">{item.subtitle}</p>
-                  </div>
-                </div>
-              ))}
+                ))
+              )}
+              {todoTasks.length > 5 && (
+                <p className="text-xs text-muted-foreground pt-2">+{todoTasks.length - 5} more</p>
+              )}
             </div>
           </WidgetCard>
         );
-      case "today":
+      case "completed":
+        const completedTasks = tasks.filter(t => t.completed);
         return (
-          <WidgetCard key="today" title="Today" size="medium">
-            <div className="space-y-3">
-              {upcomingEvents.map((event, index) => (
-                <div key={index} className="flex items-start gap-3">
-                  <span className="text-xs text-muted-foreground w-14 shrink-0 pt-0.5">{event.time}</span>
-                  <p className="text-sm">{event.title}</p>
-                </div>
-              ))}
+          <WidgetCard key="completed" title="Completed" size="medium">
+            <div className="space-y-2">
+              {completedTasks.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-4">No completed tasks</p>
+              ) : (
+                completedTasks.slice(0, 5).map((task) => (
+                  <div key={task.id} className="flex items-start gap-2 p-2 rounded-lg hover-elevate cursor-pointer">
+                    <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                    <p className="text-sm truncate line-through text-muted-foreground">{task.title}</p>
+                  </div>
+                ))
+              )}
+              {completedTasks.length > 5 && (
+                <p className="text-xs text-muted-foreground pt-2">+{completedTasks.length - 5} more</p>
+              )}
             </div>
           </WidgetCard>
         );
