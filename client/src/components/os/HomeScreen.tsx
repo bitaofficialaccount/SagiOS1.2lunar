@@ -28,11 +28,32 @@ export function HomeScreen({ onOpenApp, onOpenVoice, isStoreMode }: HomeScreenPr
   const { firstDay, daysInMonth } = getDaysInMonth(currentDate);
   const today = currentDate.getDate();
 
-  const upcomingEvents = [
+  const [upcomingEvents, setUpcomingEvents] = useState([
     { time: "11 AM", title: "Team Meeting" },
     { time: "2 PM", title: "Project Review" },
     { time: "4:30 PM", title: "Client Call" },
-  ];
+  ]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("sagiCalendarEvents");
+    if (saved) {
+      try {
+        const events = JSON.parse(saved);
+        const today = new Date();
+        const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+        const todayEvents = events
+          .filter((e: any) => e.date === todayStr)
+          .sort((a: any, b: any) => a.time.localeCompare(b.time))
+          .map((e: any) => ({ time: e.time, title: e.title }));
+        
+        if (todayEvents.length > 0) {
+          setUpcomingEvents(todayEvents);
+        }
+      } catch (err) {
+        console.error("Failed to load calendar events", err);
+      }
+    }
+  }, []);
 
   const forYouItems = [
     { icon: Bell, title: "New notification", subtitle: "System Update", color: "text-blue-400" },

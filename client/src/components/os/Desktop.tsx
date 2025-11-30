@@ -21,6 +21,7 @@ import { Music } from "../apps/Music";
 import { Maps } from "../apps/Maps";
 import { News } from "../apps/News";
 import { Books } from "../apps/Books";
+import { Calendar } from "../apps/Calendar";
 import { Mic, Grid2X2, ArrowLeft, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,7 +33,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-type Screen = "home" | "browser" | "calculator" | "notes" | "files" | "settings" | "photos" | "weather" | "videos" | "music" | "maps" | "news" | "books" | "explore" | "retail" | "testing-board";
+type Screen = "home" | "browser" | "calculator" | "notes" | "files" | "settings" | "photos" | "weather" | "videos" | "music" | "maps" | "news" | "books" | "calendar" | "explore" | "retail" | "testing-board";
 
 export function Desktop() {
   const [isSetupComplete, setIsSetupComplete] = useState(localStorage.getItem("setupComplete") === "true");
@@ -59,7 +60,6 @@ export function Desktop() {
     }
   }, []);
 
-  // Wake word listener for "Hey, Sagi"
   useEffect(() => {
     const SpeechRecognitionAPI = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognitionAPI || !storeMode) return;
@@ -102,7 +102,6 @@ export function Desktop() {
       recognition.start();
     };
 
-    // Only start wake word listener in Store Mode
     if (storeMode && !voiceOpen) {
       startWakeWordListener();
     }
@@ -181,6 +180,9 @@ export function Desktop() {
       setVoiceOpen(false);
     } else if (lowerCommand.includes("books")) {
       navigateTo("books");
+      setVoiceOpen(false);
+    } else if (lowerCommand.includes("calendar")) {
+      navigateTo("calendar");
       setVoiceOpen(false);
     } else if (lowerCommand.includes("home")) {
       navigateTo("home");
@@ -262,6 +264,8 @@ export function Desktop() {
         return <News onBack={goBack} />;
       case "books":
         return <Books onBack={goBack} />;
+      case "calendar":
+        return <Calendar onBack={goBack} />;
       case "explore":
         return <ExploreSagi onBack={goBack} />;
       case "retail":
@@ -397,7 +401,6 @@ export function Desktop() {
         {renderScreen()}
       </div>
 
-      {/* Persistent Buttons at Bottom Center */}
       <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-[200] flex gap-4">
         {currentScreen === "home" ? (
           <Button
@@ -444,11 +447,8 @@ export function Desktop() {
       />
 
       <SagiKeyboard
-        isOpen={globalKeyboardOpen}
-        onSend={handleSagiMessage}
-        onClose={() => setGlobalKeyboardOpen(false)}
-        isListening={isListening}
-        transcript={transcript}
+        isOpen={keyboardOpen}
+        onClose={() => setKeyboardOpen(false)}
       />
     </div>
   );
