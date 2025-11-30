@@ -326,7 +326,7 @@ export function HomeScreen({ onOpenApp, onOpenVoice, isStoreMode }: HomeScreenPr
         );
       case "weather":
         return (
-          <WidgetCard key="weather" size="medium" className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20">
+          <WidgetCard key="weather" size="medium" className="bg-gradient-to-br from-purple-500/20 to-violet-500/20">
             <div className="flex flex-col h-full">
               <p className="text-sm text-muted-foreground mb-2">Seattle, WA</p>
               <div className="flex items-center gap-4 mb-4">
