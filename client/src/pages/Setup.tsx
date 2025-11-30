@@ -97,7 +97,46 @@ export function Setup({ onComplete, onTestingMode, onStoreMode }: SetupProps) {
   const handleMicrophoneTest = async () => {
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
-      setMicrophoneGranted(true);
+      
+      // Start speech recognition to detect wake word
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        console.error("Speech Recognition not supported");
+        setMicrophoneGranted(true);
+        return;
+      }
+
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = "en-US";
+
+      const customPronunciation = localStorage.getItem("sagiPronunciation") || "Hey S-A-G-I";
+      const wakeWordVariants = [
+        "hey sagi",
+        "hey S-A-G-I",
+        customPronunciation.toLowerCase(),
+      ];
+
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript.toLowerCase().trim();
+        console.log("Heard:", transcript);
+        
+        // Check if any variant of wake word was detected
+        const detected = wakeWordVariants.some(variant => 
+          transcript.includes(variant.toLowerCase())
+        );
+        
+        if (detected) {
+          setMicrophoneGranted(true);
+        }
+      };
+
+      recognition.onerror = (event: any) => {
+        console.error("Speech recognition error:", event.error);
+      };
+
+      recognition.start();
     } catch (err) {
       console.error("Microphone access denied", err);
     }
