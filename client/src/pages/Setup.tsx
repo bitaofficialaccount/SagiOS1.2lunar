@@ -298,15 +298,17 @@ export function Setup({ onComplete }: SetupProps) {
               ))}
             </div>
 
+            <p className="text-center text-sm text-muted-foreground">You can set this up later in Apps or Settings</p>
+
             <div className="flex gap-3">
               <Button
                 variant="outline"
                 size="lg"
                 className="flex-1 h-12 rounded-full"
-                onClick={() => setStep("language")}
-                data-testid="button-back-providers"
+                onClick={() => setStep("microphone")}
+                data-testid="button-skip-providers"
               >
-                Back
+                Skip
               </Button>
               <Button
                 size="lg"
