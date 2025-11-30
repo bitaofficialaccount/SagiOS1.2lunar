@@ -1,15 +1,13 @@
 import { useState, useEffect } from "react";
-import { Play, Calendar, Cloud, Sun, CloudRain, Image, Bell, ShoppingBag, Grid2X2, ArrowRight } from "lucide-react";
+import { Play, Calendar, Cloud, Sun, CloudRain, Image, Bell, ShoppingBag } from "lucide-react";
 import { WidgetCard } from "./WidgetCard";
-import { Button } from "@/components/ui/button";
 
 interface HomeScreenProps {
   onOpenApp: (app: string) => void;
   onOpenVoice: () => void;
-  onOpenAppDrawer: () => void;
 }
 
-export function HomeScreen({ onOpenApp, onOpenVoice, onOpenAppDrawer }: HomeScreenProps) {
+export function HomeScreen({ onOpenApp, onOpenVoice }: HomeScreenProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   useEffect(() => {
@@ -42,40 +40,7 @@ export function HomeScreen({ onOpenApp, onOpenVoice, onOpenAppDrawer }: HomeScre
 
   return (
     <div className="h-full overflow-auto p-6 pt-20">
-      <div className="grid grid-cols-4 grid-rows-4 gap-4 max-w-7xl mx-auto h-full">
-        <WidgetCard 
-          title="Apps"
-          size="medium"
-        >
-          <div className="flex flex-col gap-3 h-full">
-            <div className="grid grid-cols-3 gap-2">
-              {[
-                { name: "Browser", icon: Play },
-                { name: "Photos", icon: Image },
-                { name: "Weather", icon: Cloud },
-              ].map((app) => (
-                <button
-                  key={app.name}
-                  onClick={() => onOpenApp(app.name.toLowerCase())}
-                  className="flex flex-col items-center justify-center p-3 rounded-lg bg-secondary/50 hover-elevate active-elevate-2"
-                  data-testid={`home-app-${app.name.toLowerCase()}`}
-                >
-                  <app.icon className="w-5 h-5 mb-1" />
-                  <span className="text-xs text-center">{app.name}</span>
-                </button>
-              ))}
-            </div>
-            <Button
-              onClick={onOpenAppDrawer}
-              className="w-full mt-auto text-sm h-10"
-              data-testid="button-all-apps"
-            >
-              <Grid2X2 className="w-4 h-4 mr-2" />
-              All Apps
-            </Button>
-          </div>
-        </WidgetCard>
-
+      <div className="grid grid-cols-4 grid-rows-3 gap-4 max-w-7xl mx-auto h-full">
         <WidgetCard 
           title="Quick Actions" 
           size="medium"
@@ -190,7 +155,7 @@ export function HomeScreen({ onOpenApp, onOpenVoice, onOpenAppDrawer }: HomeScre
 
         <WidgetCard 
           size="large"
-          className="col-start-1 row-start-4"
+          className="col-start-1 row-start-3"
         >
           <div>
             <div className="flex items-center justify-between mb-4">
