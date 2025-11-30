@@ -187,17 +187,6 @@ export function HomeScreen({ onOpenApp, onOpenVoice }: HomeScreenProps) {
             </div>
           </div>
         </WidgetCard>
-
-        <div className="col-span-2 row-start-3 flex items-center justify-center">
-          <Button
-            size="lg"
-            className="w-20 h-20 rounded-full bg-primary/80 hover:bg-primary shadow-lg shadow-primary/30"
-            onClick={onOpenVoice}
-            data-testid="button-voice-main"
-          >
-            <Mic className="w-8 h-8" />
-          </Button>
-        </div>
       </div>
     </div>
   );
