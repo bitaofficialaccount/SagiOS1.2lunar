@@ -57,10 +57,29 @@ export function VoiceAssistant({ onCommand, onStateChange }: VoiceAssistantProps
       setTranscript(text);
       
       if (result.isFinal) {
-        if (text.includes("hey sagi") || text.includes("hey sagie") || text.includes("hey saggy")) {
+        // Get custom pronunciation from localStorage
+        const customPronunciation = localStorage.getItem("sagiPronunciation") || "Hey S-A-G-I";
+        const wakeWordVariants = [
+          "hey sagi",
+          "hey sagie",
+          "hey saggy",
+          customPronunciation.toLowerCase(),
+        ];
+        
+        const wakeWordDetected = wakeWordVariants.some(variant => 
+          text.includes(variant.toLowerCase())
+        );
+        
+        if (wakeWordDetected) {
           setState("listening");
           onStateChange?.("listening");
           setTranscript("");
+          // Flash green visual feedback
+          const elem = document.querySelector('[data-testid="voice-assistant-feedback"]');
+          if (elem) {
+            elem.classList.add("animate-pulse");
+            setTimeout(() => elem.classList.remove("animate-pulse"), 500);
+          }
         } else if (state === "listening") {
           handleCommand(text);
         }
