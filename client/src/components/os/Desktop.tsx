@@ -60,6 +60,62 @@ export function Desktop() {
     }
   }, []);
 
+  // Wake word listener for "Hey, Sagi"
+  useEffect(() => {
+    const SpeechRecognitionAPI = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognitionAPI || !storeMode) return;
+
+    let recognition: any = null;
+    let isListeningForWakeWord = true;
+
+    const startWakeWordListener = () => {
+      if (!isListeningForWakeWord) return;
+      
+      recognition = new SpeechRecognitionAPI();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = "en-US";
+
+      recognition.onresult = (event: any) => {
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript.toLowerCase();
+          if (transcript.includes("hey sagi") || transcript.includes("hey, sagi")) {
+            setVoiceOpen(true);
+            isListeningForWakeWord = false;
+            recognition.stop();
+            break;
+          }
+        }
+      };
+
+      recognition.onerror = () => {
+        if (isListeningForWakeWord) {
+          setTimeout(startWakeWordListener, 500);
+        }
+      };
+
+      recognition.onend = () => {
+        if (isListeningForWakeWord) {
+          setTimeout(startWakeWordListener, 500);
+        }
+      };
+
+      recognition.start();
+    };
+
+    // Only start wake word listener in Store Mode
+    if (storeMode && !voiceOpen) {
+      startWakeWordListener();
+    }
+
+    return () => {
+      if (recognition) {
+        isListeningForWakeWord = false;
+        recognition.stop();
+      }
+    };
+  }, [storeMode, voiceOpen]);
+
   const navigateTo = useCallback((screen: string) => {
     const validScreen = screen as Screen;
     setCurrentScreen(validScreen);
