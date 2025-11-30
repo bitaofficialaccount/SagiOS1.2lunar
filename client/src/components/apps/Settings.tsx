@@ -10,7 +10,8 @@ import {
   User,
   Info,
   ArrowLeft,
-  CloudRain
+  CloudRain,
+  RotateCcw
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
@@ -36,6 +37,7 @@ const sections: SettingsSection[] = [
   { id: "privacy", name: "Privacy", icon: <Lock className="w-6 h-6" /> },
   { id: "personalization", name: "Personalization", icon: <Palette className="w-6 h-6" /> },
   { id: "account", name: "Account", icon: <User className="w-6 h-6" /> },
+  { id: "system", name: "System", icon: <RotateCcw className="w-6 h-6" /> },
   { id: "about", name: "About", icon: <Info className="w-6 h-6" /> },
 ];
 
@@ -262,6 +264,40 @@ export function Settings({ onBack }: SettingsProps) {
           </div>
         )}
 
+        {activeSection === "system" && (
+          <div className="space-y-6 max-w-md">
+            <div>
+              <h2 className="text-lg font-medium mb-1">System</h2>
+              <p className="text-sm text-muted-foreground">
+                Device and OS management
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div className="p-4 bg-destructive/10 rounded-lg border border-destructive/30">
+                <h3 className="font-medium text-destructive mb-2">Reset OS</h3>
+                <p className="text-xs text-muted-foreground mb-4">
+                  This will clear all settings, history, notes, and return to the initial setup. This action cannot be undone.
+                </p>
+                <Button
+                  variant="destructive"
+                  className="w-full"
+                  onClick={() => {
+                    if (confirm("Are you sure you want to reset SagiOS? All data will be erased.")) {
+                      localStorage.clear();
+                      window.location.reload();
+                    }
+                  }}
+                  data-testid="button-reset-os"
+                >
+                  <RotateCcw className="w-4 h-4 mr-2" />
+                  Reset to Setup
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {activeSection === "about" && (
           <div className="space-y-6 max-w-md">
             <div>
@@ -319,7 +355,7 @@ export function Settings({ onBack }: SettingsProps) {
           </div>
         )}
 
-        {!["voice", "about", "display", "weather"].includes(activeSection) && (
+        {!["voice", "about", "display", "weather", "system"].includes(activeSection) && (
           <div className="flex items-center justify-center h-full text-muted-foreground">
             <p className="text-lg">Settings for {sections.find(s => s.id === activeSection)?.name} coming soon</p>
           </div>
