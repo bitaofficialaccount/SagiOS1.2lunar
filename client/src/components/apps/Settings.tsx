@@ -39,7 +39,6 @@ const sections: SettingsSection[] = [
   { id: "notifications", name: "Notifications", icon: <Bell className="w-6 h-6" /> },
   { id: "privacy", name: "Privacy", icon: <Lock className="w-6 h-6" /> },
   { id: "personalization", name: "Personalization", icon: <Palette className="w-6 h-6" /> },
-  { id: "themes", name: "Themes & Background", icon: <Paintbrush className="w-6 h-6" /> },
   { id: "account", name: "Account", icon: <User className="w-6 h-6" /> },
   { id: "system", name: "System", icon: <RotateCcw className="w-6 h-6" /> },
   { id: "about", name: "About", icon: <Info className="w-6 h-6" /> },
@@ -269,17 +268,20 @@ export function Settings({ onBack, isStoreMode }: SettingsProps) {
           </div>
         )}
 
-        {activeSection === "themes" && (
+        {activeSection === "personalization" && (
           <div className="space-y-6 max-w-2xl">
             <div>
-              <h2 className="text-lg font-medium mb-1">Themes & Background</h2>
+              <h2 className="text-lg font-medium mb-1">Personalization</h2>
               <p className="text-sm text-muted-foreground">
-                Choose your desktop background theme
+                Customize your SAGI OS experience
               </p>
             </div>
 
             <div>
-              <h3 className="text-sm font-medium mb-4">Available Themes</h3>
+              <h3 className="text-sm font-medium mb-4">Themes & Background</h3>
+              <p className="text-xs text-muted-foreground mb-4">
+                Choose your desktop background theme
+              </p>
               <div className="grid grid-cols-2 gap-4">
                 {themes.map((theme) => (
                   <button
@@ -418,7 +420,7 @@ export function Settings({ onBack, isStoreMode }: SettingsProps) {
           </div>
         )}
 
-        {!["voice", "about", "display", "weather", "system"].includes(activeSection) && (
+        {!["voice", "about", "display", "weather", "system", "personalization"].includes(activeSection) && (
           <div className="flex items-center justify-center h-full text-muted-foreground">
             <p className="text-lg">Settings for {sections.find(s => s.id === activeSection)?.name} coming soon</p>
           </div>
