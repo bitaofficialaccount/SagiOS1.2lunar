@@ -11,32 +11,32 @@ interface AppDrawerProps {
 }
 
 const apps = [
-  { id: "browser", name: "Browser", icon: Globe, color: "bg-violet-500/20 text-violet-400" },
+  { id: "browser", name: "Browser", icon: Globe, color: "bg-blue-500/20 text-blue-400" },
   { id: "photos", name: "Photos", icon: Image, color: "bg-pink-500/20 text-pink-400" },
-  { id: "weather", name: "Weather", icon: Cloud, color: "bg-blue-500/20 text-blue-400" },
+  { id: "weather", name: "Weather", icon: Cloud, color: "bg-cyan-500/20 text-cyan-400" },
   { id: "videos", name: "Videos", icon: Video, color: "bg-red-500/20 text-red-400" },
   { id: "music", name: "Music", icon: Music, color: "bg-indigo-500/20 text-indigo-400" },
   { id: "notes", name: "Notes", icon: FileText, color: "bg-amber-500/20 text-amber-400" },
   { id: "calendar", name: "Calendar", icon: Calendar, color: "bg-rose-500/20 text-rose-400" },
   { id: "news", name: "News", icon: Newspaper, color: "bg-orange-500/20 text-orange-400" },
   { id: "books", name: "Books", icon: BookOpen, color: "bg-yellow-500/20 text-yellow-400" },
-  { id: "settings", name: "Settings", icon: Settings, color: "bg-fuchsia-500/20 text-fuchsia-400" },
+  { id: "settings", name: "Settings", icon: Settings, color: "bg-blue-600/20 text-blue-500" },
 ];
 
 const getStoreApps = (isDeveloperMode: boolean) => {
   const apps = [
     { id: "retail", name: "SAGI Retail", icon: Zap, color: "bg-gradient-to-br from-amber-500/40 to-orange-500/40 text-amber-400" },
     { id: "explore", name: "Explore SAGI", icon: Compass, color: "bg-gradient-to-br from-primary/40 to-accent/40 text-accent" },
-    { id: "browser", name: "Browser", icon: Globe, color: "bg-violet-500/20 text-violet-400" },
+    { id: "browser", name: "Browser", icon: Globe, color: "bg-blue-500/20 text-blue-400" },
     { id: "photos", name: "Photos", icon: Image, color: "bg-pink-500/20 text-pink-400" },
-    { id: "weather", name: "Weather", icon: Cloud, color: "bg-blue-500/20 text-blue-400" },
+    { id: "weather", name: "Weather", icon: Cloud, color: "bg-cyan-500/20 text-cyan-400" },
     { id: "videos", name: "Videos", icon: Video, color: "bg-red-500/20 text-red-400" },
     { id: "music", name: "Music", icon: Music, color: "bg-indigo-500/20 text-indigo-400" },
     { id: "notes", name: "Notes", icon: FileText, color: "bg-amber-500/20 text-amber-400" },
     { id: "calendar", name: "Calendar", icon: Calendar, color: "bg-rose-500/20 text-rose-400" },
     { id: "news", name: "News", icon: Newspaper, color: "bg-orange-500/20 text-orange-400" },
     { id: "books", name: "Books", icon: BookOpen, color: "bg-yellow-500/20 text-yellow-400" },
-    { id: "settings", name: "Settings", icon: Settings, color: "bg-fuchsia-500/20 text-fuchsia-400" },
+    { id: "settings", name: "Settings", icon: Settings, color: "bg-blue-600/20 text-blue-500" },
   ];
   
   if (isDeveloperMode) {

@@ -73,7 +73,7 @@ export function Music({ onBack }: MusicAppProps) {
       </div>
 
       <div className="flex-1 px-6 pb-20 overflow-auto flex flex-col items-center justify-center">
-        <MusicIcon className="w-24 h-24 text-purple-400 opacity-30 mb-4" />
+        <MusicIcon className="w-24 h-24 text-blue-400 opacity-30 mb-4" />
         <h2 className="text-2xl font-semibold mb-2">Music Player</h2>
         <p className="text-muted-foreground text-center mb-6">
           Connect your {musicProvider.charAt(0).toUpperCase() + musicProvider.slice(1)} account in settings to start playing music
