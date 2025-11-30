@@ -113,13 +113,13 @@ export function News({ onBack }: NewsProps) {
       </div>
 
       <div className="flex-1 bg-background overflow-hidden">
-        <iframe
+        <iframe scrolling="yes"
           ref={iframeRef}
           src={`/api/proxy?url=${encodeURIComponent(activeSource.url)}`}
           className="w-full h-full border-0"
           title={activeSource.name}
           data-testid="iframe-news"
-          sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock allow-modals allow-presentation"
+          sandbox="allow-scripts allow-popups allow-forms allow-pointer-lock allow-modals allow-presentation allow-top-navigation"
           allow="fullscreen"
         />
       </div>

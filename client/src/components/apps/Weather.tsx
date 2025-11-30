@@ -54,7 +54,7 @@ export function Weather({ onBack }: WeatherProps) {
       </div>
 
       <div className="flex-1 overflow-hidden">
-        <iframe
+        <iframe scrolling="yes"
           ref={iframeRef}
           src={proxyUrl}
           className="w-full h-full border-0"

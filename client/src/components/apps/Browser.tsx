@@ -220,13 +220,13 @@ export function Browser({ onBack }: BrowserProps) {
 
       <div className="flex-1 bg-background overflow-hidden">
         {activeTab.url ? (
-          <iframe
+          <iframe scrolling="yes"
             ref={iframeRef}
             src={`/api/proxy?url=${encodeURIComponent(activeTab.url)}`}
             className="w-full h-full border-0"
             title={activeTab.title}
             data-testid="iframe-browser"
-            sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock allow-modals allow-presentation"
+            sandbox="allow-scripts allow-popups allow-forms allow-pointer-lock allow-modals allow-presentation allow-top-navigation"
             allow="fullscreen"
           />
         ) : (

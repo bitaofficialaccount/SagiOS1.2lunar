@@ -99,7 +99,7 @@ export function Books({ onBack }: BooksProps) {
       </div>
 
       <div className="flex-1 bg-background overflow-hidden">
-        <iframe
+        <iframe scrolling="yes"
           ref={iframeRef}
           src={`/api/proxy?url=${encodeURIComponent(selectedUrl)}`}
           className="w-full h-full border-0"
