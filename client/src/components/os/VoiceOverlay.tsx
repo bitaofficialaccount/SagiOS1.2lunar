@@ -14,6 +14,7 @@ interface VoiceOverlayProps {
   isOpen: boolean;
   onClose: () => void;
   onCommand: (command: string) => void;
+  onKeyboardToggle?: (open: boolean) => void;
 }
 
 const suggestions = [
@@ -23,7 +24,7 @@ const suggestions = [
   "Tell me a joke",
 ];
 
-export function VoiceOverlay({ isOpen, onClose, onCommand }: VoiceOverlayProps) {
+export function VoiceOverlay({ isOpen, onClose, onCommand, onKeyboardToggle }: VoiceOverlayProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
@@ -219,7 +220,10 @@ export function VoiceOverlay({ isOpen, onClose, onCommand }: VoiceOverlayProps) 
               size="icon"
               variant={isTextMode ? "default" : "secondary"}
               className="w-16 h-16 rounded-full"
-              onClick={() => setIsTextMode(!isTextMode)}
+              onClick={() => {
+                setIsTextMode(!isTextMode);
+                onKeyboardToggle?.(!isTextMode);
+              }}
               data-testid="button-text-mode"
             >
               <Keyboard className="w-7 h-7" />

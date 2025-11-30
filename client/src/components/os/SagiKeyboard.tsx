@@ -4,34 +4,98 @@ import { Button } from "@/components/ui/button";
 
 interface SagiKeyboardProps {
   isOpen: boolean;
-  onSend: (message: string) => void;
+  onSend?: (message: string) => void;
   onClose: () => void;
+  onKeyPress?: (key: string) => void;
   isListening?: boolean;
   transcript?: string;
 }
 
 const keyboardRows = [
-  ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
-  ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
-  ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
-  ["Z", "X", "C", "V", "B", "N", "M"],
+  [
+    { label: "Esc", special: true },
+    { label: "-", char: "-" },
+    { label: "=", char: "=" },
+    { label: "Del", special: true },
+  ],
+  [
+    { label: "Tab", special: true },
+    { label: "1", char: "1" },
+    { label: "2", char: "2" },
+    { label: "3", char: "3" },
+    { label: "4", char: "4" },
+    { label: "5", char: "5" },
+    { label: "6", char: "6" },
+    { label: "7", char: "7" },
+    { label: "8", char: "8" },
+    { label: "9", char: "9" },
+    { label: "0", char: "0" },
+    { label: "-", char: "-" },
+    { label: "=", char: "=" },
+  ],
+  [
+    { label: "Caps", special: true },
+    { label: "Q", char: "q" },
+    { label: "W", char: "w" },
+    { label: "E", char: "e" },
+    { label: "R", char: "r" },
+    { label: "T", char: "t" },
+    { label: "Y", char: "y" },
+    { label: "U", char: "u" },
+    { label: "I", char: "i" },
+    { label: "O", char: "o" },
+    { label: "P", char: "p" },
+    { label: "[", char: "[" },
+    { label: "]", char: "]" },
+  ],
+  [
+    { label: "Shift", special: true },
+    { label: "A", char: "a" },
+    { label: "S", char: "s" },
+    { label: "D", char: "d" },
+    { label: "F", char: "f" },
+    { label: "G", char: "g" },
+    { label: "H", char: "h" },
+    { label: "J", char: "j" },
+    { label: "K", char: "k" },
+    { label: "L", char: "l" },
+    { label: ";", char: ";" },
+    { label: "'", char: "'" },
+  ],
+  [
+    { label: "Shift", special: true },
+    { label: "Z", char: "z" },
+    { label: "X", char: "x" },
+    { label: "C", char: "c" },
+    { label: "V", char: "v" },
+    { label: "B", char: "b" },
+    { label: "N", char: "n" },
+    { label: "M", char: "m" },
+    { label: ",", char: "," },
+    { label: ".", char: "." },
+    { label: "/", char: "/" },
+  ],
 ];
 
-export function SagiKeyboard({ isOpen, onSend, onClose, isListening, transcript }: SagiKeyboardProps) {
+export function SagiKeyboard({ isOpen, onSend, onClose, onKeyPress, isListening, transcript }: SagiKeyboardProps) {
   const [input, setInput] = useState("");
   const [isRecording, setIsRecording] = useState(false);
 
   if (!isOpen) return null;
 
   const handleSend = () => {
-    if (input.trim()) {
+    if (input.trim() && onSend) {
       onSend(input.trim());
       setInput("");
     }
   };
 
-  const handleKeyPress = (key: string) => {
-    setInput(prev => prev + key.toLowerCase());
+  const handleKeyPress = (char: string) => {
+    const newInput = input + char;
+    setInput(newInput);
+    if (onKeyPress) {
+      onKeyPress(char);
+    }
   };
 
   const startListening = () => {
@@ -69,105 +133,83 @@ export function SagiKeyboard({ isOpen, onSend, onClose, isListening, transcript 
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-[#0a1628] to-[#1a2942] border-t border-border/50 backdrop-blur-xl z-[250] p-3">
-      <div className="max-w-7xl mx-auto space-y-3">
-        {/* Input Display */}
-        <div className="flex items-center gap-2 px-4 py-3 bg-card/40 rounded-xl border border-border/50 min-h-12">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Type message..."
-            className="flex-1 bg-transparent outline-none text-lg"
-            data-testid="input-sagi-text"
-          />
-          <Button
-            size="icon"
-            variant="ghost"
-            onClick={() => setInput(input.slice(0, -1))}
-            className="h-8 w-8"
-            data-testid="button-backspace"
-          >
-            <Delete className="w-4 h-4" />
-          </Button>
-        </div>
-
+    <div className="fixed bottom-0 left-0 right-0 bg-[#2a2a2a] border-t border-border/50 backdrop-blur-xl z-[250] p-2">
+      <div className="max-w-full mx-auto space-y-1">
         {/* Virtual Keyboard */}
-        <div className="space-y-1.5">
+        <div className="space-y-1">
           {keyboardRows.map((row, rowIndex) => (
-            <div key={rowIndex} className="flex justify-center gap-1">
-              {rowIndex === 2 && <div className="w-5" />}
-              {rowIndex === 3 && <div className="w-10" />}
-              {row.map((key) => (
+            <div key={rowIndex} className="flex justify-center gap-0.5 px-2">
+              {row.map((key, keyIndex) => (
                 <button
-                  key={key}
-                  onClick={() => handleKeyPress(key)}
-                  className="px-2 py-2 min-w-10 bg-card/60 hover-elevate active-elevate-2 rounded text-sm font-medium border border-border/30 transition-all"
-                  data-testid={`key-${key}`}
+                  key={`${rowIndex}-${keyIndex}`}
+                  onClick={() => {
+                    if (key.char) {
+                      handleKeyPress(key.char);
+                    }
+                  }}
+                  className={`${
+                    key.special ? "px-3" : "px-2"
+                  } py-1.5 bg-[#3a3a3a] hover:bg-[#4a4a4a] active-elevate-2 rounded text-xs font-medium border border-[#555] transition-all ${
+                    key.label === "Mic" ? "text-primary" : ""
+                  }`}
+                  data-testid={`key-${key.label}`}
                 >
-                  {key}
+                  {key.label}
                 </button>
               ))}
             </div>
           ))}
 
-          {/* Bottom Row - Space, Period, Question */}
-          <div className="flex justify-center gap-1">
+          {/* Bottom Row - Space, Mic, Backspace, Enter */}
+          <div className="flex justify-center gap-0.5 px-2">
             <Button
               size="sm"
               variant="secondary"
-              className="flex-1 rounded"
-              onClick={() => setInput(prev => prev + " ")}
+              className="flex-1 h-8 rounded text-xs"
+              onClick={() => handleKeyPress(" ")}
               data-testid="key-space"
             >
               Space
             </Button>
-            <button
-              onClick={() => handleKeyPress(".")}
-              className="px-2 py-2 min-w-10 bg-card/60 hover-elevate active-elevate-2 rounded text-sm font-medium border border-border/30"
-              data-testid="key-period"
+            <Button
+              size="sm"
+              variant={isRecording ? "default" : "secondary"}
+              className={`h-8 rounded text-xs ${isRecording ? "bg-primary animate-pulse" : ""}`}
+              onClick={startListening}
+              data-testid="button-mic-keyboard"
             >
-              .
-            </button>
-            <button
-              onClick={() => handleKeyPress("?")}
-              className="px-2 py-2 min-w-10 bg-card/60 hover-elevate active-elevate-2 rounded text-sm font-medium border border-border/30"
-              data-testid="key-question"
+              <Mic className={`w-4 h-4 ${isRecording ? "animate-pulse" : ""}`} />
+            </Button>
+            <Button
+              size="sm"
+              variant="secondary"
+              className="h-8 rounded text-xs"
+              onClick={() => setInput(input.slice(0, -1))}
+              data-testid="button-backspace"
             >
-              ?
-            </button>
+              <Delete className="w-4 h-4" />
+            </Button>
+            {onSend && (
+              <Button
+                size="sm"
+                className="h-8 rounded text-xs"
+                onClick={handleSend}
+                disabled={!input.trim()}
+                data-testid="button-send-keyboard"
+              >
+                <Send className="w-4 h-4" />
+              </Button>
+            )}
+            <Button
+              size="sm"
+              variant="ghost"
+              className="h-8 rounded text-xs"
+              onClick={onClose}
+              data-testid="button-close-keyboard"
+            >
+              <span className="text-lg">×</span>
+            </Button>
           </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex gap-2 justify-center">
-          <Button
-            size="icon"
-            variant="ghost"
-            className="w-12 h-12 rounded-full"
-            onClick={onClose}
-            data-testid="button-close-keyboard"
-          >
-            <span className="text-xl">×</span>
-          </Button>
-          <Button
-            size="icon"
-            variant={isRecording ? "default" : "secondary"}
-            className={`w-12 h-12 rounded-full ${isRecording ? "bg-primary animate-pulse" : ""}`}
-            onClick={startListening}
-            data-testid="button-mic-keyboard"
-          >
-            <Mic className={`w-5 h-5 ${isRecording ? "animate-pulse" : ""}`} />
-          </Button>
-          <Button
-            size="icon"
-            className="w-12 h-12 rounded-full"
-            onClick={handleSend}
-            disabled={!input.trim()}
-            data-testid="button-send-keyboard"
-          >
-            <Send className="w-5 h-5" />
-          </Button>
         </div>
       </div>
     </div>

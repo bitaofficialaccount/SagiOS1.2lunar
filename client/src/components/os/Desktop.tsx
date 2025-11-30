@@ -21,6 +21,7 @@ export function Desktop() {
   const [screenHistory, setScreenHistory] = useState<Screen[]>(["home"]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [voiceOpen, setVoiceOpen] = useState(false);
+  const [globalKeyboardOpen, setGlobalKeyboardOpen] = useState(false);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [isListening, setIsListening] = useState(false);
@@ -146,12 +147,13 @@ export function Desktop() {
         isOpen={voiceOpen}
         onClose={() => setVoiceOpen(false)}
         onCommand={handleVoiceCommand}
+        onKeyboardToggle={setGlobalKeyboardOpen}
       />
 
       <SagiKeyboard
-        isOpen={keyboardOpen}
+        isOpen={globalKeyboardOpen}
         onSend={handleSagiMessage}
-        onClose={() => setKeyboardOpen(false)}
+        onClose={() => setGlobalKeyboardOpen(false)}
         isListening={isListening}
         transcript={transcript}
       />
