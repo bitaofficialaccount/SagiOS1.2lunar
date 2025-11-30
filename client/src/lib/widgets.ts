@@ -1,4 +1,4 @@
-import { LucideIcon, Zap, CheckCircle2, Calendar, Cloud, Grid3x3 } from "lucide-react";
+import { LucideIcon, Zap, Bell, Calendar, Cloud, Grid3x3 } from "lucide-react";
 
 export interface WidgetDefinition {
   id: string;
@@ -19,20 +19,20 @@ export const WIDGET_LIBRARY: WidgetDefinition[] = [
     category: "quick",
   },
   {
-    id: "to-do",
-    name: "To Do",
-    icon: CheckCircle2,
-    description: "Tasks to complete",
+    id: "for-you",
+    name: "For You",
+    icon: Bell,
+    description: "Personalized notifications",
     defaultSize: "medium",
-    category: "quick",
+    category: "info",
   },
   {
-    id: "completed",
-    name: "Completed",
-    icon: CheckCircle2,
-    description: "Completed tasks",
+    id: "today",
+    name: "Today",
+    icon: Calendar,
+    description: "Upcoming events",
     defaultSize: "medium",
-    category: "quick",
+    category: "calendar",
   },
   {
     id: "weather",
@@ -60,7 +60,7 @@ export const WIDGET_LIBRARY: WidgetDefinition[] = [
   },
 ];
 
-export const DEFAULT_WIDGETS = ["quick-actions", "to-do", "completed", "weather", "calendar-month", "apps"];
+export const DEFAULT_WIDGETS = ["quick-actions", "for-you", "today", "weather", "calendar-month", "apps"];
 
 export function getWidgetDefinition(id: string): WidgetDefinition | undefined {
   return WIDGET_LIBRARY.find(w => w.id === id);

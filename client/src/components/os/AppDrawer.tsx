@@ -1,4 +1,4 @@
-import { Globe, FileText, Settings, Image, Cloud, Video, Music, Newspaper, BookOpen, Compass, Zap, SquareCheckBig, Calendar, X } from "lucide-react";
+import { Globe, FileText, Settings, Image, Cloud, Video, Music, Newspaper, BookOpen, Compass, Zap, SquareCheckBig, Calendar, X, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
@@ -13,6 +13,7 @@ interface AppDrawerProps {
 
 const apps = [
   { id: "browser", name: "Browser", icon: Globe, color: "bg-blue-500/20 text-blue-400" },
+  { id: "tasks", name: "Tasks", icon: CheckCircle2, color: "bg-green-500/20 text-green-400" },
   { id: "photos", name: "Photos", icon: Image, color: "bg-pink-500/20 text-pink-400" },
   { id: "weather", name: "Weather", icon: Cloud, color: "bg-cyan-500/20 text-cyan-400" },
   { id: "videos", name: "Videos", icon: Video, color: "bg-red-500/20 text-red-400" },
@@ -29,6 +30,7 @@ const getStoreApps = (isDeveloperMode: boolean) => {
     { id: "retail", name: "SAGI Retail", icon: Zap, color: "bg-gradient-to-br from-amber-500/40 to-orange-500/40 text-amber-400" },
     { id: "explore", name: "Explore SAGI", icon: Compass, color: "bg-gradient-to-br from-primary/40 to-accent/40 text-accent" },
     { id: "browser", name: "Browser", icon: Globe, color: "bg-blue-500/20 text-blue-400" },
+    { id: "tasks", name: "Tasks", icon: CheckCircle2, color: "bg-green-500/20 text-green-400" },
     { id: "photos", name: "Photos", icon: Image, color: "bg-pink-500/20 text-pink-400" },
     { id: "weather", name: "Weather", icon: Cloud, color: "bg-cyan-500/20 text-cyan-400" },
     { id: "videos", name: "Videos", icon: Video, color: "bg-red-500/20 text-red-400" },
