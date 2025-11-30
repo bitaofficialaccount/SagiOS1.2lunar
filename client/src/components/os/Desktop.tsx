@@ -19,6 +19,7 @@ import { Music } from "../apps/Music";
 import { News } from "../apps/News";
 import { Books } from "../apps/Books";
 import { Calendar } from "../apps/Calendar";
+import { Tasks } from "../apps/Tasks";
 import { Mic, Grid2X2, ArrowLeft, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,7 +31,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-type Screen = "home" | "browser" | "notes" | "settings" | "photos" | "weather" | "videos" | "music" | "news" | "books" | "calendar" | "explore" | "retail" | "testing-board";
+type Screen = "home" | "browser" | "notes" | "settings" | "photos" | "weather" | "videos" | "music" | "news" | "books" | "calendar" | "tasks" | "explore" | "retail" | "testing-board";
 
 export function Desktop() {
   const [isSetupComplete, setIsSetupComplete] = useState(localStorage.getItem("setupComplete") === "true");
@@ -249,6 +250,8 @@ export function Desktop() {
         return <Books onBack={goBack} />;
       case "calendar":
         return <Calendar onBack={goBack} />;
+      case "tasks":
+        return <Tasks onBack={goBack} />;
       case "explore":
         return <ExploreSagi onBack={goBack} />;
       case "retail":

@@ -389,6 +389,7 @@ export function HomeScreen({ onOpenApp, onOpenVoice, isStoreMode }: HomeScreenPr
       case "apps":
         const appGrid = [
           { id: "browser", name: "Browser", icon: Globe, color: "text-blue-400" },
+          { id: "tasks", name: "Tasks", icon: FileText, color: "text-green-400" },
           { id: "notes", name: "Notes", icon: FileText, color: "text-amber-400" },
           { id: "videos", name: "Videos", icon: Video, color: "text-red-400" },
           { id: "music", name: "Music", icon: Music, color: "text-blue-400" },
