@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Play, Calendar, Cloud, Sun, CloudRain, Image, Bell, ShoppingBag, Zap, Lightbulb, Compass, Mic, Hand, Keyboard, AppWindow, MousePointer2, Settings } from "lucide-react";
+import { Play, Calendar, Cloud, Sun, CloudRain, Image, Bell, ShoppingBag, Zap, Lightbulb, Compass, Mic, Hand, Keyboard, AppWindow, MousePointer2, Settings, Globe, FileText, Calculator, FolderOpen, Video, Music, Map, Newspaper, BookOpen, Grid3x3 } from "lucide-react";
 import { WidgetCard } from "./WidgetCard";
 import { WidgetManager } from "./WidgetManager";
 import { Button } from "@/components/ui/button";
@@ -389,6 +389,56 @@ export function HomeScreen({ onOpenApp, onOpenVoice, isStoreMode }: HomeScreenPr
                   </button>
                 ))}
               </div>
+            </div>
+          </WidgetCard>
+        );
+      case "apps":
+        const appGrid = [
+          { id: "browser", name: "Browser", icon: Globe, color: "text-blue-400" },
+          { id: "notes", name: "Notes", icon: FileText, color: "text-amber-400" },
+          { id: "calculator", name: "Calculator", icon: Calculator, color: "text-teal-400" },
+          { id: "files", name: "Files", icon: FolderOpen, color: "text-sky-400" },
+          { id: "videos", name: "Videos", icon: Video, color: "text-red-400" },
+          { id: "music", name: "Music", icon: Music, color: "text-purple-400" },
+          { id: "maps", name: "Maps", icon: Map, color: "text-green-400" },
+          { id: "news", name: "News", icon: Newspaper, color: "text-orange-400" },
+        ];
+        return (
+          <WidgetCard key="apps" size="large" title="Apps">
+            <div className="space-y-3">
+              <div className="grid grid-cols-4 gap-3">
+                {appGrid.map(app => {
+                  const AppIcon = app.icon;
+                  return (
+                    <button
+                      key={app.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onOpenApp(app.id);
+                      }}
+                      className="flex flex-col items-center gap-2 p-3 rounded-lg bg-secondary/30 hover-elevate active-elevate-2 transition-all"
+                      data-testid={`app-widget-${app.id}`}
+                    >
+                      <div className="w-10 h-10 rounded-lg bg-secondary/50 flex items-center justify-center">
+                        <AppIcon className={`w-5 h-5 ${app.color}`} />
+                      </div>
+                      <span className="text-xs font-medium text-center">{app.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onOpenApp("home");
+                }}
+                variant="outline"
+                className="w-full"
+                data-testid="button-all-apps-widget"
+              >
+                <Grid3x3 className="w-4 h-4 mr-2" />
+                See All Apps
+              </Button>
             </div>
           </WidgetCard>
         );
