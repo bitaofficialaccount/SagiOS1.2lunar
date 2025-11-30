@@ -180,6 +180,7 @@ export function Desktop() {
           <HomeScreen 
             onOpenApp={navigateTo} 
             onOpenVoice={() => setVoiceOpen(true)}
+            isStoreMode={storeMode}
           />
         );
       case "browser":
@@ -370,6 +371,7 @@ export function Desktop() {
         onClose={() => setAppDrawerOpen(false)}
         onNavigate={navigateTo}
         currentScreen={currentScreen}
+        isStoreMode={storeMode}
       />
 
       <VoiceOverlay
