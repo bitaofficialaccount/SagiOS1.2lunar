@@ -114,9 +114,11 @@ export function Desktop() {
     >
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
       
-      <StatusBar 
-        onMenuClick={() => setMenuOpen(true)}
-      />
+      {!globalKeyboardOpen && !voiceOpen && (
+        <StatusBar 
+          onMenuClick={() => setMenuOpen(true)}
+        />
+      )}
 
       <div className="h-full w-full animate-fade-in">
         {renderScreen()}
