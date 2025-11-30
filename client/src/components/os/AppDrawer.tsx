@@ -48,6 +48,7 @@ const getStoreApps = (isDeveloperMode: boolean) => {
 
 export function AppDrawer({ isOpen, onClose, onNavigate, currentScreen, isStoreMode, isDeveloperMode }: AppDrawerProps) {
   const displayApps = isStoreMode ? getStoreApps(isDeveloperMode || false) : apps;
+  const dockApps = displayApps.slice(0, 8); // First 8 apps for dock
   
   if (!isOpen) return null;
 
@@ -90,6 +91,28 @@ export function AppDrawer({ isOpen, onClose, onNavigate, currentScreen, isStoreM
               >
                 <app.icon className="w-12 h-12 mb-3" />
                 <span className="text-sm font-medium text-center">{app.name}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Dock at bottom */}
+        <div className="border-t border-border/50 p-4 bg-black/40 backdrop-blur-sm">
+          <div className="flex items-center justify-center gap-3">
+            {dockApps.map((app) => (
+              <button
+                key={app.id}
+                onClick={() => {
+                  onNavigate(app.id);
+                  onClose();
+                }}
+                className={`flex items-center justify-center w-14 h-14 rounded-2xl transition-all hover-elevate active-elevate-2 ${
+                  currentScreen === app.id ? "ring-2 ring-primary" : ""
+                } ${app.color}`}
+                data-testid={`app-dock-${app.id}`}
+                title={app.name}
+              >
+                <app.icon className="w-7 h-7" />
               </button>
             ))}
           </div>
