@@ -64,7 +64,7 @@ export function VoiceOverlay({ isOpen, onClose, onCommand, onKeyboardToggle }: V
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleSuggestionClick = (suggestion: string) => {
+  const handleSuggestionClick = async (suggestion: string) => {
     const context = getContext();
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -75,8 +75,20 @@ export function VoiceOverlay({ isOpen, onClose, onCommand, onKeyboardToggle }: V
     };
     setMessages(prev => [...prev, userMessage]);
     
-    setTimeout(() => {
-      const response = generateResponse(suggestion);
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: suggestion,
+          conversationHistory: context,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to get response");
+      const data = await res.json();
+      const response = data.response;
+
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: "assistant",
@@ -86,10 +98,20 @@ export function VoiceOverlay({ isOpen, onClose, onCommand, onKeyboardToggle }: V
       };
       setMessages(prev => [...prev, assistantMessage]);
       onCommand(suggestion);
-    }, 500);
+    } catch (error) {
+      console.error("Error getting AI response:", error);
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        type: "assistant",
+        content: "I'm having trouble connecting to my AI. Please try again.",
+        timestamp: new Date(),
+        context,
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    }
   };
 
-  const handleTextMessage = (text: string) => {
+  const handleTextMessage = async (text: string) => {
     const context = getContext();
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -100,8 +122,20 @@ export function VoiceOverlay({ isOpen, onClose, onCommand, onKeyboardToggle }: V
     };
     setMessages(prev => [...prev, userMessage]);
     
-    setTimeout(() => {
-      const response = generateResponse(text);
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: text,
+          conversationHistory: context,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to get response");
+      const data = await res.json();
+      const response = data.response;
+
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: "assistant",
@@ -111,7 +145,17 @@ export function VoiceOverlay({ isOpen, onClose, onCommand, onKeyboardToggle }: V
       };
       setMessages(prev => [...prev, assistantMessage]);
       onCommand(text);
-    }, 500);
+    } catch (error) {
+      console.error("Error getting AI response:", error);
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        type: "assistant",
+        content: "I'm having trouble connecting to my AI. Please try again.",
+        timestamp: new Date(),
+        context,
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    }
   };
 
   const clearHistory = () => {
@@ -125,45 +169,6 @@ export function VoiceOverlay({ isOpen, onClose, onCommand, onKeyboardToggle }: V
     return messages.slice(-4).map(m => `${m.type}: ${m.content}`);
   };
 
-  const generateResponse = (query: string): string => {
-    const lowerQuery = query.toLowerCase();
-    const context = getContext();
-    const hasRecentContext = context.length > 0;
-
-    // Context-aware responses
-    if (lowerQuery.includes("weather")) {
-      if (hasRecentContext && context.some(c => c.includes("weather"))) {
-        return "I already shared the weather details. It's still 65°F and sunny. Would you like more details about tomorrow's forecast?";
-      }
-      return "It's currently 65°F and sunny in your area. Great weather for outdoor activities!";
-    }
-    if (lowerQuery.includes("time")) {
-      const time = new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
-      if (hasRecentContext && context.some(c => c.includes("time"))) {
-        return `It's now ${time}. Time flies when you're having fun!`;
-      }
-      return `The current time is ${time}.`;
-    }
-    if (lowerQuery.includes("joke")) {
-      const jokes = [
-        "Why do programmers prefer dark mode? Because light attracts bugs!",
-        "How many programmers does it take to change a light bulb? None, that's a hardware problem!",
-        "Why did the developer go broke? Because he used up all his cache!",
-      ];
-      const randomJoke = jokes[Math.floor(Math.random() * jokes.length)];
-      return randomJoke;
-    }
-    if (lowerQuery.includes("browser")) {
-      return "Opening the web browser for you.";
-    }
-    if (lowerQuery.includes("help") || lowerQuery.includes("what can you do")) {
-      return "I can help you navigate apps, tell you the time or weather, open applications, and answer questions. Just ask!";
-    }
-    if (lowerQuery.includes("hello") || lowerQuery.includes("hi")) {
-      return "Hello! I'm Sagi, your voice assistant. How can I help you today?";
-    }
-    return "I heard your request. How else can I help you?";
-  };
 
   const startListening = () => {
     setIsListening(true);

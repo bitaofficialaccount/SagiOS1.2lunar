@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import OpenAI from "openai";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -11,6 +12,63 @@ export async function registerRoutes(
 
   // use storage to perform CRUD operations on the storage interface
   // e.g. storage.insertUser(user) or storage.getUserByUsername(username)
+
+  const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+
+  // AI Chat route
+  app.post("/api/chat", async (req, res) => {
+    try {
+      const { message, conversationHistory } = req.body;
+
+      if (!message || typeof message !== "string") {
+        return res.status(400).json({ error: "Message is required" });
+      }
+
+      // Build messages array with conversation history
+      const messages: any[] = [
+        {
+          role: "system",
+          content: "You are Sagi, a helpful voice-activated AI assistant for a smart display OS. You are friendly, concise, and helpful. Keep responses brief and conversational. If someone asks you to open an app like 'browser', 'mail', 'weather', or 'photos', acknowledge that you'll help them. Answer questions directly and naturally.",
+        },
+      ];
+
+      // Add recent conversation history for context
+      if (Array.isArray(conversationHistory) && conversationHistory.length > 0) {
+        conversationHistory.slice(-8).forEach((msg: string) => {
+          const [role, ...content] = msg.split(": ");
+          if (role === "user" || role === "assistant") {
+            messages.push({
+              role: role === "user" ? "user" : "assistant",
+              content: content.join(": "),
+            });
+          }
+        });
+      }
+
+      // Add current message
+      messages.push({
+        role: "user",
+        content: message,
+      });
+
+      // Call OpenAI API
+      const completion = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: messages,
+        max_tokens: 150,
+        temperature: 0.7,
+      });
+
+      const response = completion.choices[0].message.content || "I'm not sure how to respond to that.";
+
+      res.json({ response });
+    } catch (error) {
+      console.error("Chat error:", error);
+      res.status(500).json({ error: "Failed to get AI response" });
+    }
+  });
 
   // Browser proxy route
   app.get("/api/proxy", async (req, res) => {
