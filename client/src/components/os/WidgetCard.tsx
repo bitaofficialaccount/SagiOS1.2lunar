@@ -26,7 +26,7 @@ export function WidgetCard({
     wide: "col-span-2 row-span-1",
   };
 
-  const baseClasses = `${sizeClasses[size]} bg-card/60 backdrop-blur-md rounded-2xl p-4 text-left transition-all border border-border/30 ${className}`;
+  const baseClasses = `${sizeClasses[size]} bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-md rounded-2xl p-4 text-left transition-all border border-blue-500/20 ${className}`;
 
   if (interactive && onClick) {
     return (
