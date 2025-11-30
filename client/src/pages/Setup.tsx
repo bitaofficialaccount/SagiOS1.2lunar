@@ -327,13 +327,13 @@ export function Setup({ onComplete }: SetupProps) {
 
         {/* App Providers Step */}
         {step === "app-providers" && (
-          <div className="space-y-8 animate-fade-in">
+          <div className="flex flex-col h-screen space-y-6 animate-fade-in">
             <div>
               <h2 className="text-3xl font-bold mb-2">Connect Your Accounts</h2>
               <p className="text-muted-foreground">Choose your preferred provider for each app (optional)</p>
             </div>
 
-            <div className="space-y-6">
+            <div className="flex-1 overflow-y-auto space-y-4 pr-2">
               {appProviders.map((app) => (
                 <div key={app.id} className="bg-card/40 backdrop-blur-md border border-border/50 rounded-2xl p-4">
                   <p className="font-semibold mb-3">{app.name}</p>
@@ -362,26 +362,28 @@ export function Setup({ onComplete }: SetupProps) {
               ))}
             </div>
 
-            <p className="text-center text-sm text-muted-foreground">You can set this up later in Apps or Settings</p>
+            <div className="space-y-3">
+              <p className="text-center text-sm text-muted-foreground">You can set this up later in Apps or Settings</p>
 
-            <div className="flex gap-3">
-              <Button
-                variant="outline"
-                size="lg"
-                className="flex-1 h-12 rounded-full"
-                onClick={() => setStep("microphone")}
-                data-testid="button-skip-providers"
-              >
-                Skip
-              </Button>
-              <Button
-                size="lg"
-                className="flex-1 h-12 rounded-full"
-                onClick={() => setStep("microphone")}
-                data-testid="button-next-providers"
-              >
-                Next
-              </Button>
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="flex-1 h-12 rounded-full"
+                  onClick={() => setStep("microphone")}
+                  data-testid="button-skip-providers"
+                >
+                  Skip
+                </Button>
+                <Button
+                  size="lg"
+                  className="flex-1 h-12 rounded-full"
+                  onClick={() => setStep("microphone")}
+                  data-testid="button-next-providers"
+                >
+                  Next
+                </Button>
+              </div>
             </div>
           </div>
         )}
