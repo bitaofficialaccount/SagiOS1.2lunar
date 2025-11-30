@@ -6,9 +6,10 @@ import { Input } from "@/components/ui/input";
 interface SetupProps {
   onComplete: () => void;
   onTestingMode?: (username: string) => void;
+  onStoreMode?: (username: string) => void;
 }
 
-export function Setup({ onComplete, onTestingMode }: SetupProps) {
+export function Setup({ onComplete, onTestingMode, onStoreMode }: SetupProps) {
   const [step, setStep] = useState<"welcome" | "sagi-id" | "country" | "language" | "app-providers" | "microphone" | "complete">("welcome");
   const [sagiIdMode, setSagiIdMode] = useState<"create" | "login">("create");
   const [sagiId, setSagiId] = useState("");
@@ -61,6 +62,14 @@ export function Setup({ onComplete, onTestingMode }: SetupProps) {
       localStorage.setItem("currentUser", username);
       localStorage.setItem("isTestingMode", "true");
       onTestingMode?.(username);
+      return;
+    }
+
+    // Check for store mode credentials
+    if (username === "SAGI_RETAILMODE" && password === "retail553") {
+      localStorage.setItem("currentUser", username);
+      localStorage.setItem("storeMode", "true");
+      onStoreMode?.(username);
       return;
     }
 
@@ -169,18 +178,6 @@ export function Setup({ onComplete, onTestingMode }: SetupProps) {
               >
                 Get Started
                 <ChevronRight className="w-5 h-5 ml-2" />
-              </Button>
-              <Button
-                size="lg"
-                variant="secondary"
-                className="w-full h-14 text-lg rounded-full"
-                onClick={() => {
-                  localStorage.setItem("storeMode", "true");
-                  onComplete?.();
-                }}
-                data-testid="button-store-mode"
-              >
-                Store Mode Demo
               </Button>
             </div>
           </div>

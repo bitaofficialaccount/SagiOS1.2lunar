@@ -136,6 +136,11 @@ export function Desktop() {
     setIsSetupComplete(true);
   };
 
+  const handleStoreMode = (username: string) => {
+    setStoreMode(true);
+    setIsSetupComplete(true);
+  };
+
   const handleTestingLogout = () => {
     setIsTestingMode(false);
     setIsSetupComplete(false);
@@ -145,6 +150,7 @@ export function Desktop() {
     setStoreMode(false);
     setIsSetupComplete(false);
     localStorage.removeItem("storeMode");
+    localStorage.removeItem("currentUser");
   };
 
   const renderScreen = () => {
@@ -220,7 +226,7 @@ export function Desktop() {
   }
 
   if (!isSetupComplete) {
-    return <Setup onComplete={handleSetupComplete} onTestingMode={handleTestingMode} />;
+    return <Setup onComplete={handleSetupComplete} onTestingMode={handleTestingMode} onStoreMode={handleStoreMode} />;
   }
 
   return (
