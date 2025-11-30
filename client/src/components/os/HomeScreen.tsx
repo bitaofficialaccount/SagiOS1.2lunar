@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Play, Calendar, Cloud, Sun, CloudRain, Image, Bell, ShoppingBag, Zap, Lightbulb, Compass, Mic, Hand, Keyboard, AppWindow, MousePointer2, Settings, Globe, FileText, Video, Music, Newspaper, BookOpen, Grid3x3, CheckCircle2, Circle } from "lucide-react";
+import { Play, Calendar, Cloud, Sun, CloudRain, Image, Bell, ShoppingBag, Zap, Lightbulb, Compass, Mic, Hand, Keyboard, AppWindow, MousePointer2, Settings, Globe, FileText, Video, Music, Newspaper, BookOpen, Grid3x3, CheckCircle2, Circle, RotateCcw } from "lucide-react";
 import { WidgetCard } from "./WidgetCard";
 import { WidgetManager } from "./WidgetManager";
 import { Button } from "@/components/ui/button";
@@ -493,14 +493,27 @@ export function HomeScreen({ onOpenApp, onOpenVoice, isStoreMode }: HomeScreenPr
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-semibold">Home</h1>
-          <Button
-            size="icon"
-            variant="ghost"
-            onClick={() => setWidgetManagerOpen(true)}
-            data-testid="button-manage-widgets"
-          >
-            <Settings className="w-5 h-5" />
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={() => {
+                setActiveWidgets(DEFAULT_WIDGETS);
+              }}
+              data-testid="button-reset-widgets"
+              title="Reset to default layout"
+            >
+              <RotateCcw className="w-5 h-5" />
+            </Button>
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={() => setWidgetManagerOpen(true)}
+              data-testid="button-manage-widgets"
+            >
+              <Settings className="w-5 h-5" />
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-4 grid-rows-auto gap-4">
