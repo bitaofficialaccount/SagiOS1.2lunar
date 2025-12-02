@@ -2,9 +2,8 @@
 
 ## Overview
 
-SagiOS is a web-based operating system with an integrated AI voice assistant. It provides a desktop-like experience in the browser, featuring voice activation ("Hey, Sagi"), built-in applications (Browser, File Manager, Notes, Calculator, Settings), and a modern UI inspired by Windows 11 and macOS design patterns.
-
-The application is built as a full-stack TypeScript project with a React frontend and Express backend, designed to run on Replit with PostgreSQL database support.
+SagiOS is a web-based operating system with an integrated AI voice assistant. 
+The application is built as a full-stack TypeScript project with a React frontend and Express backend, with PostgreSQL database support.
 
 ## User Preferences
 
@@ -38,8 +37,6 @@ Preferred communication style: Simple, everyday language.
 **Desktop Environment**
 - Desktop component acts as the shell/orchestrator
 - Screen-based navigation system (home, browser, calculator, notes, files, settings)
-- Window management system with draggable, resizable windows (Window component)
-- Status bar, taskbar, and side menu for navigation
 - Widget-based home screen with calendar, weather, and quick actions
 
 ### Backend Architecture
@@ -69,7 +66,6 @@ Preferred communication style: Simple, everyday language.
 - HMR (Hot Module Replacement) in development via Vite middleware
 
 **Development Environment**
-- Replit-specific plugins for error overlays and dev tooling
 - Environment-based configuration (NODE_ENV)
 - TypeScript compilation without emit (type checking only)
 
@@ -131,11 +127,6 @@ Preferred communication style: Simple, everyday language.
 - **uuid**: UUID generation
 - **clsx** & **tailwind-merge**: Conditional className utilities
 
-### Potential Future Integrations
-- **OpenAI**: AI/LLM integration (dependency present but not implemented)
-- **Google Generative AI**: Alternative AI provider
-- **Stripe**: Payment processing
-- **Nodemailer**: Email functionality
-- **WebSocket (ws)**: Real-time communication
-- **Multer**: File upload handling
-- **XLSX**: Spreadsheet operations
+### Attrubution
+sagiOS was made on Replit and created by Sagi Studios (c) 2021 -> 2025 
+Attrubution required with **Original project By SAGI Studios**
