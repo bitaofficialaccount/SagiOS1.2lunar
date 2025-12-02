@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import OpenAI from "openai";
+import Anthropic from "@anthropic-ai/sdk";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -13,8 +13,8 @@ export async function registerRoutes(
   // use storage to perform CRUD operations on the storage interface
   // e.g. storage.insertUser(user) or storage.getUserByUsername(username)
 
-  const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
+  const anthropic = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY,
   });
 
   // AI Chat route
@@ -26,13 +26,11 @@ export async function registerRoutes(
         return res.status(400).json({ error: "Message is required" });
       }
 
+      // Build system prompt
+      const systemPrompt = "You are Sagi, a helpful voice-activated AI assistant for a smart display OS. You are friendly, concise, and helpful. Keep responses brief and conversational. If someone asks you to open an app like 'browser', 'mail', 'weather', or 'photos', acknowledge that you'll help them. Answer questions directly and naturally.";
+
       // Build messages array with conversation history
-      const messages: any[] = [
-        {
-          role: "system",
-          content: "You are Sagi, a helpful voice-activated AI assistant for a smart display OS. You are friendly, concise, and helpful. Keep responses brief and conversational. If someone asks you to open an app like 'browser', 'mail', 'weather', or 'photos', acknowledge that you'll help them. Answer questions directly and naturally.",
-        },
-      ];
+      const messages: any[] = [];
 
       // Add recent conversation history for context
       if (Array.isArray(conversationHistory) && conversationHistory.length > 0) {
@@ -53,17 +51,19 @@ export async function registerRoutes(
         content: message,
       });
 
-      // Call OpenAI API
-      const completion = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        messages: messages,
+      // Call Anthropic Claude API
+      const response = await anthropic.messages.create({
+        model: "claude-3-5-sonnet-20241022",
         max_tokens: 150,
-        temperature: 0.7,
+        system: systemPrompt,
+        messages: messages,
       });
 
-      const response = completion.choices[0].message.content || "I'm not sure how to respond to that.";
+      const responseText = response.content[0].type === "text" 
+        ? response.content[0].text 
+        : "I'm not sure how to respond to that.";
 
-      res.json({ response });
+      res.json({ response: responseText });
     } catch (error) {
       console.error("Chat error:", error);
       res.status(500).json({ error: "Failed to get AI response" });
